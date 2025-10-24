@@ -25,52 +25,60 @@ const MakeReservation = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  setSuccess('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
-  if (!formData.room || !formData.date || !formData.startTime || !formData.endTime) {
-    setError('Please fill in all fields');
-    return;
-  }
-
-  try {
     const token = localStorage.getItem('access_token');
-    const userId = localStorage.getItem('user_id');
+    if (!token) {
+      setError('No authentication token found. Please log in.');
+      return;
+    }
 
-    const payload = {
-      room: formData.room,
-      user: userId,
-      date: formData.date,
-      start_time: formData.startTime,
-      end_time: formData.endTime
-    };
+    if (!formData.room || !formData.date || !formData.startTime || !formData.endTime) {
+      setError('Please fill in all fields');
+      return;
+    }
 
-    await axios.post('http://localhost:8000/api/reservations/', payload, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    try {
+      await axios.post(
+        'http://localhost:8000/api/reservations/',
+        {
+          room: formData.room,
+          date: formData.date,
+          start_time: formData.startTime,
+          end_time: formData.endTime
+        },
+        {
+          headers: {
+            'Authorization': `Token ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-    setSuccess('✅ Reservation created successfully!');
-    setTimeout(() => navigate('/'), 1500);
-  } catch (err) {
-    console.error('Reservation error:', err.response ? err.response.data : err);
-    setError('Failed to make reservation');
-  }
-};
+      setSuccess('Reservation created successfully!');
+      setTimeout(() => navigate('/'), 1500);
+    } catch (err) {
+      console.error('Reservation error:', err.response?.data || err.message);
+      setError(err.response?.data?.detail || 'Failed to create reservation');
+    }
+  };
+
   return (
-    <div style={{ maxWidth: '500px', margin: '50px auto' }}>
+    <div className="reservation-container">
       <h2>Make Reservation</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+      <form onSubmit={handleSubmit} className="reservation-form">
         <label>Room:</label>
         <select name="room" value={formData.room} onChange={handleChange} required>
           <option value="">Select a room</option>
           {rooms.map(room => (
-            <option key={room._id} value={room._id}>{room.name} (Capacity: {room.capacity})</option>
+            <option key={room._id} value={room._id}>
+              {room.name} (Capacity: {room.capacity})
+            </option>
           ))}
         </select>
 
@@ -83,19 +91,7 @@ const MakeReservation = () => {
         <label>End Time:</label>
         <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required />
 
-        <button
-          type="submit"
-          style={{
-            padding: '10px',
-            backgroundColor: '#f60505',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Reserve
-        </button>
+        <button type="submit" className="reserve-button">Reserve</button>
       </form>
     </div>
   );
