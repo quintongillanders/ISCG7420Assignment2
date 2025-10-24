@@ -5,7 +5,7 @@ const Footer = () => {
         <footer style={{
             textAlign: 'center',
             padding: '16px',
-            backgroundColor: '#f1f1f1',
+            backgroundColor: '#f60404',
             marginTop: '40px'
         }}>
             <p>&copy; 2025 Te Whare Runanga. All rights reserved.</p>
