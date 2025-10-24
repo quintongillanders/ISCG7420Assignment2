@@ -57,12 +57,16 @@ const Login = () => {
         <button
           type="submit"
           style={{
-            padding: '10px 20px',
-            backgroundColor: '#333',
+            width: '60%',
+            padding: '12px',
+            backgroundColor: '#ef0808',
             color: '#fff',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: '16px',
+            marginTop: '16px',
+              alignSelf: 'center',
           }}
         >
           Login

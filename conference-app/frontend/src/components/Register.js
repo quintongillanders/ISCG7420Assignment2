@@ -38,11 +38,25 @@ const Register = () => {
       <h2>Register</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-        <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+        <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required style={{ padding: '8px' }} />
+        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required style={{ padding: '8px' }} />
+        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required style={{ padding: '8px' }} />
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required style={{ padding: '8px' }} />
+        <button
+          type="submit"
+          style={{
+           width: '60%',
+            padding: '12px',
+            backgroundColor: '#ef0808',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            marginTop: '16px',
+              alignSelf: 'center',
+          }}
+        >
           Register
         </button>
       </form>
