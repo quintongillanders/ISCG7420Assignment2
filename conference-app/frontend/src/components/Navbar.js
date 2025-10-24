@@ -27,6 +27,20 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  // Common link/button styles
+  const linkStyle = {
+    color: '#fff',
+    textDecoration: 'none',
+    fontSize: '16px',
+    padding: '8px 12px',
+    borderRadius: '4px',
+    transition: 'background 0.2s',
+  };
+
+  const hoverEffect = {
+    backgroundColor: 'rgba(255,255,255,0.2)'
+  };
+
   return (
     <nav style={{
       display: 'flex',
@@ -34,45 +48,66 @@ const Navbar = () => {
       alignItems: 'center',
       padding: '16px 32px',
       backgroundColor: '#f60505',
-      color: '#fff'
+      color: '#fff',
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000
     }}>
       {/* Left: Logo */}
       <div>
-        <Link to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', fontSize: '20px' }}>
+        <Link to="/" style={{ ...linkStyle, fontWeight: 'bold', fontSize: '20px' }}>
           Te Whare Runanga
         </Link>
       </div>
 
+      {/* Center: Make Reservation */}
       <div style={{ flex: 1, textAlign: 'center' }}>
         {isLoggedIn && (
           <Link
             to="/make-reservation"
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '16px' }}
+            style={linkStyle}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             Make Reservation
           </Link>
         )}
       </div>
 
-      
-      <div>
+      {/* Right: Login / Register / Logout */}
+      <div style={{ display: 'flex', gap: '8px' }}>
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
             style={{
+              ...linkStyle,
               background: 'none',
-              border: 'none',
-              color: '#fff',
-              cursor: 'pointer',
-              fontSize: '16px'
+              border: '1px solid #fff',
+              cursor: 'pointer'
             }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             Logout
           </button>
         ) : (
           <>
-            <Link to="/login" style={{ color: '#fff', marginRight: '16px', textDecoration: 'none' }}>Login</Link>
-            <Link to="/register" style={{ color: '#fff', textDecoration: 'none' }}>Register</Link>
+            <Link
+              to="/login"
+              style={linkStyle}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              style={linkStyle}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              Register
+            </Link>
           </>
         )}
       </div>

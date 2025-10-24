@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import RoomList from './components/RoomList';
 import Login from './components/Login';
 import Register from './components/Register';
+import MakeReservation from './components/MakeReservation';
 
 function App() {
   return (
@@ -14,6 +15,8 @@ function App() {
         <Route path="/" element={<RoomList />} />
         <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/make-reservation/:roomId" element={<MakeReservation />} />
+          <Route path="/make-reservation" element={<MakeReservation />} />
       </Routes>
       <Footer />
     </Router>
