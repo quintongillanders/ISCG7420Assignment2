@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getRooms } from '../services/api';
+import './RoomList.css';
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);

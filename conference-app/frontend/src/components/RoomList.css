@@ -1,0 +1,38 @@
+.room-list {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.rooms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.room-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 250px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.room-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.room-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #100f0f;
+}
+
+.room-card p {
+  margin: 5px 0;
+  color: #333;
+}
