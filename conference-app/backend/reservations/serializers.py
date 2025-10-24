@@ -8,6 +8,10 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReservationSerializer(serializers.ModelSerializer):
+    room = serializers.SlugRelatedField(
+        queryset=Room.objects.all(),
+        slug_field='name'
+    )
     class Meta:
         model = Reservation
         fields = '__all__'
