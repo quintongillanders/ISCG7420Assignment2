@@ -5,14 +5,12 @@ import axios from 'axios';
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('access_token'));
   const navigate = useNavigate();
-  const location = useLocation(); // track route changes
+  const location = useLocation();
 
-  // Update login state whenever the route changes
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem('access_token'));
   }, [location]);
 
-  // Optional: listen for storage changes across tabs
   useEffect(() => {
     const handleStorageChange = () => {
       setIsLoggedIn(!!localStorage.getItem('access_token'));
@@ -26,22 +24,37 @@ const Navbar = () => {
     localStorage.removeItem('refresh_token');
     delete axios.defaults.headers.common['Authorization'];
     setIsLoggedIn(false);
-    navigate('/login'); // redirect to login after logout
+    navigate('/login');
   };
 
   return (
     <nav style={{
       display: 'flex',
       justifyContent: 'space-between',
+      alignItems: 'center',
       padding: '16px 32px',
       backgroundColor: '#f60505',
       color: '#fff'
     }}>
+      {/* Left: Logo */}
       <div>
-        <Link to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold' }}>
+        <Link to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', fontSize: '20px' }}>
           Te Whare Runanga
         </Link>
       </div>
+
+      <div style={{ flex: 1, textAlign: 'center' }}>
+        {isLoggedIn && (
+          <Link
+            to="/make-reservation"
+            style={{ color: '#fff', textDecoration: 'none', fontSize: '16px' }}
+          >
+            Make Reservation
+          </Link>
+        )}
+      </div>
+
+      
       <div>
         {isLoggedIn ? (
           <button
