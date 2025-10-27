@@ -6,6 +6,7 @@ import RoomList from './components/RoomList';
 import Login from './components/Login';
 import Register from './components/Register';
 import MakeReservation from './components/MakeReservation';
+import AdminPanel from './components/AdminPanel';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/make-reservation/:roomId" element={<MakeReservation />} />
           <Route path="/make-reservation" element={<MakeReservation />} />
+          <Route path="/admin" element={<AdminPanel />} />
       </Routes>
       <Footer />
     </Router>

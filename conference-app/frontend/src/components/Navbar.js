@@ -61,21 +61,18 @@ const Navbar = () => {
       </div>
 
       {/* Center: Make Reservation */}
-      <div style={{ flex: 1, textAlign: 'center' }}>
+     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         {isLoggedIn && (
           <Link
-            to="/make-reservation"
+            to="/admin"
             style={linkStyle}
             onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
-            Make Reservation
+            Admin Panel
           </Link>
         )}
-      </div>
 
-      {/* Right: Login / Register / Logout */}
-      <div style={{ display: 'flex', gap: '8px' }}>
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
