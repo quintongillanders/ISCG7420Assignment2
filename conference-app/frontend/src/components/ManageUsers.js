@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form } from 'react-bootstrap';
+import { Table, Button, Modal, Form, Badge } from 'react-bootstrap';
 import axios from 'axios';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -13,11 +14,14 @@ const ManageUsers = () => {
   });
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('/api/users/');
+      const response = await axios.get('http://localhost:8000/api/users/');
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,52 +40,98 @@ const ManageUsers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/register/', {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        is_staff: formData.is_staff
+      await axios.post('/api/users/', {
+        ...formData,
+        is_superuser: formData.is_staff,
+        is_active: true
       });
       setShowModal(false);
       fetchUsers();
       setFormData({ username: '', email: '', password: '', is_staff: false });
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error creating user:', error.response?.data || error.message);
     }
   };
 
+  const toggleAdminStatus = async (userId, currentStatus) => {
+    try {
+      await axios.patch(`/api/users/${userId}/`, {
+        is_staff: !currentStatus,
+        is_superuser: !currentStatus
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  if (loading) {
+    return <div className="loading-spinner">Loading users...</div>;
+  }
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h3>Manage Users</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h3>User Management</h3>
         <Button variant="primary" onClick={() => setShowModal(true)}>
           Add New User
         </Button>
       </div>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Admin</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.is_staff ? 'Yes' : 'No'}</td>
-              <td>
-                <Button variant="warning" size="sm" className="me-2">Edit</Button>
-                <Button variant="danger" size="sm">Delete</Button>
-              </td>
+      <div className="table-responsive">
+        <Table striped bordered hover className="align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Role</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {users.length > 0 ? (
+              users.map(user => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    <Badge bg={user.is_active ? 'success' : 'secondary'}>
+                      {user.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Badge bg={user.is_staff ? 'primary' : 'info'}>
+                      {user.is_staff ? 'Admin' : 'User'}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Button 
+                      variant={user.is_staff ? 'warning' : 'success'} 
+                      size="sm" 
+                      className="me-2"
+                      onClick={() => toggleAdminStatus(user.id, user.is_staff)}
+                    >
+                      {user.is_staff ? 'Remove Admin' : 'Make Admin'}
+                    </Button>
+                    <Button variant="danger" size="sm" disabled={user.is_superuser}>
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center">
+                  No users found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
@@ -90,7 +140,7 @@ const ManageUsers = () => {
         <form onSubmit={handleSubmit}>
           <Modal.Body>
             <Form.Group className="mb-3">
-              <Form.Label>Username</Form.Label>
+              <Form.Label>Username *</Form.Label>
               <Form.Control
                 type="text"
                 name="username"
@@ -100,7 +150,7 @@ const ManageUsers = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
+              <Form.Label>Email *</Form.Label>
               <Form.Control
                 type="email"
                 name="email"
@@ -110,7 +160,7 @@ const ManageUsers = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>Password *</Form.Label>
               <Form.Control
                 type="password"
                 name="password"
@@ -131,10 +181,10 @@ const ManageUsers = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Close
+              Cancel
             </Button>
             <Button variant="primary" type="submit">
-              Save User
+              Create User
             </Button>
           </Modal.Footer>
         </form>

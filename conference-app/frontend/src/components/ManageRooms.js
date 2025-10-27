@@ -13,7 +13,7 @@ const ManageRooms = () => {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get('/api/rooms/');
+      const response = await axios.get('http://localhost:8000/api/rooms/');
       setRooms(response.data);
     } catch (error) {
       console.error('Error fetching rooms:', error);

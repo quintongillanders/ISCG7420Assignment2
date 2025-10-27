@@ -1,24 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ManageRooms from "./ManageRooms";
 import ManageReservations from "./ManageReservations";
 import ManageUsers from "./ManageUsers";
+import "./AdminPanel.css";
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState("rooms");
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>Admin Panel</h1>
-      <div style={{ marginBottom: "20px" }}>
-        <button onClick={() => setActiveTab("rooms")}>Manage Rooms</button>
-        <button onClick={() => setActiveTab("reservations")}>Reservations</button>
-        <button onClick={() => setActiveTab("users")}>Manage Users</button>
-      </div>
+  const tabs = [
+    { id: "rooms", label: "Manage Rooms" },
+    { id: "reservations", label: "Reservations" },
+    { id: "users", label: "Manage Users" },
+  ];
 
-      <div>
-        {activeTab === "rooms" && <ManageRooms />}
-        {activeTab === "reservations" && <ManageReservations />}
-        {activeTab === "users" && <ManageUsers />}
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "rooms":
+        return <ManageRooms />;
+      case "reservations":
+        return <ManageReservations />;
+      case "users":
+        return <ManageUsers />;
+      default:
+        return <ManageRooms />;
+    }
+  };
+
+  return (
+    <div className="admin-container">
+      <div className="admin-header">
+        <h1>Te Whare Runanga Admin Panel</h1>
+        <div className="tab-buttons">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`tab-button ${activeTab === tab.id ? "active" : ""}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div className="content-card">
+        {renderTabContent()}
       </div>
     </div>
   );

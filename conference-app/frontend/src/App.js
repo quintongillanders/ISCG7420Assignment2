@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import MakeReservation from './components/MakeReservation';
 import AdminPanel from './components/AdminPanel';
+import AdminCreateReservation from './components/AdminCreateReservation';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/make-reservation/:roomId" element={<MakeReservation />} />
           <Route path="/make-reservation" element={<MakeReservation />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin/create-reservation" element={<AdminCreateReservation />} />
       </Routes>
       <Footer />
     </Router>
