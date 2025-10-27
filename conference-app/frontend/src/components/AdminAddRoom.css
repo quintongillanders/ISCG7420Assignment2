@@ -1,0 +1,106 @@
+.admin-create-room-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #f9f8f8;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding-top: 60px;
+}
+
+.admin-create-room-container h3 {
+  font-weight: 800;
+  color: #000;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+}
+
+/* Card for form */
+.admin-create-room-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Row for each input with label on left */
+.admin-create-room-card .form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-create-room-card .form-row label {
+  width: 120px;
+  font-weight: 600;
+  color: #000;
+}
+
+.admin-create-room-card .form-row input,
+.admin-create-room-card .form-row textarea {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Buttons */
+.admin-create-room-container .button-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.admin-create-room-container .btn-primary,
+.admin-create-room-container .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.admin-create-room-container .btn-primary {
+  background-color: #0738f1;
+  color: white;
+}
+
+.admin-create-room-container .btn-primary:hover {
+  background-color: #002ed9;
+}
+
+.admin-create-room-container .btn-secondary {
+  background-color: #0738f1;
+  color: white;
+}
+
+.admin-create-room-container .btn-secondary:hover {
+  background-color: #0738f1;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .admin-create-room-card {
+    width: 100%;
+  }
+
+  .admin-create-room-card .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-create-room-card .form-row label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
