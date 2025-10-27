@@ -1,30 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-const ManageReservations = () => {
-  const navigate = useNavigate();
+const ManageReservations = ({ navigate }) => { // <-- receive navigate from parent
   const [reservations, setReservations] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  const [users, setUsers] = useState([]);
 
-  const fetchReservations = async () => {
+  const fetchData = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/reservations/');
-      setReservations(res.data);
+      const [reservationsRes, roomsRes, usersRes] = await Promise.all([
+        axios.get('http://localhost:8000/api/reservations/'),
+        axios.get('http://localhost:8000/api/rooms/'),
+        axios.get('http://localhost:8000/api/users/')
+      ]);
+
+      setReservations(reservationsRes.data);
+      setRooms(roomsRes.data);
+      setUsers(usersRes.data);
     } catch (error) {
-      console.error('Error fetching reservations:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
   useEffect(() => {
-    fetchReservations();
+    fetchData();
   }, []);
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h3>Manage Reservations</h3>
-        <Button variant="primary" onClick={() => navigate('/create-reservation')}>
+        <Button
+          variant="primary"
+          onClick={() => navigate('/admin/create-reservation')} // <-- navigate to form
+        >
           Create Reservation
         </Button>
       </div>

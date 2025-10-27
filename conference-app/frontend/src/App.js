@@ -8,6 +8,11 @@ import Register from './components/Register';
 import MakeReservation from './components/MakeReservation';
 import AdminPanel from './components/AdminPanel';
 import AdminCreateReservation from './components/AdminCreateReservation';
+import ManageUsers from './components/ManageUsers';
+import ManageReservations from './components/ManageReservations';
+import ManageRooms from './components/ManageRooms';
+import AdminAddUser from './components/AdminAddUser';
+import AdminAddRoom from './components/AdminAddRoom';
 
 function App() {
   return (
@@ -21,6 +26,12 @@ function App() {
           <Route path="/make-reservation" element={<MakeReservation />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/admin/create-reservation" element={<AdminCreateReservation />} />
+          <Route path="/admin/manage-users" element={<ManageUsers />} />
+          <Route path="/admin/manage-reservations" element={<ManageReservations />} />
+          <Route path="/admin/manage-rooms" element={<ManageRooms />} />
+          <Route path="/admin/create-user" element={<AdminAddUser />} />
+          <Route path="/admin/create-room" element={<AdminAddRoom />} />
+
       </Routes>
       <Footer />
     </Router>

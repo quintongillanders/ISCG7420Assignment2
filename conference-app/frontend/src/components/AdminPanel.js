@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ManageRooms from "./ManageRooms";
 import ManageReservations from "./ManageReservations";
 import ManageUsers from "./ManageUsers";
@@ -6,6 +7,7 @@ import "./AdminPanel.css";
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState("rooms");
+  const navigate = useNavigate();
 
   const tabs = [
     { id: "rooms", label: "Manage Rooms" },
@@ -18,7 +20,8 @@ const AdminPanel = () => {
       case "rooms":
         return <ManageRooms />;
       case "reservations":
-        return <ManageReservations />;
+        // Pass navigate to ManageReservations so the button works
+        return <ManageReservations navigate={navigate} />;
       case "users":
         return <ManageUsers />;
       default:
@@ -42,7 +45,7 @@ const AdminPanel = () => {
           ))}
         </div>
       </div>
-      
+
       <div className="content-card">
         {renderTabContent()}
       </div>

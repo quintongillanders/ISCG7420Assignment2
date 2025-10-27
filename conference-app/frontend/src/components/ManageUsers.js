@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Badge } from 'react-bootstrap';
+import { Table, Button, Badge } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ManageUsers = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    is_staff: false
-  });
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -29,33 +24,9 @@ const ManageUsers = () => {
     fetchUsers();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('/api/users/', {
-        ...formData,
-        is_superuser: formData.is_staff,
-        is_active: true
-      });
-      setShowModal(false);
-      fetchUsers();
-      setFormData({ username: '', email: '', password: '', is_staff: false });
-    } catch (error) {
-      console.error('Error creating user:', error.response?.data || error.message);
-    }
-  };
-
   const toggleAdminStatus = async (userId, currentStatus) => {
     try {
-      await axios.patch(`/api/users/${userId}/`, {
+      await axios.patch(`http://localhost:8000/api/users/${userId}/`, {
         is_staff: !currentStatus,
         is_superuser: !currentStatus
       });
@@ -65,15 +36,13 @@ const ManageUsers = () => {
     }
   };
 
-  if (loading) {
-    return <div className="loading-spinner">Loading users...</div>;
-  }
+  if (loading) return <div className="loading-spinner">Loading users...</div>;
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h3>User Management</h3>
-        <Button variant="primary" onClick={() => setShowModal(true)}>
+        <Button variant="primary" onClick={() => navigate('/create-user')}>
           Add New User
         </Button>
       </div>
@@ -108,9 +77,9 @@ const ManageUsers = () => {
                     </Badge>
                   </td>
                   <td>
-                    <Button 
-                      variant={user.is_staff ? 'warning' : 'success'} 
-                      size="sm" 
+                    <Button
+                      variant={user.is_staff ? 'warning' : 'success'}
+                      size="sm"
                       className="me-2"
                       onClick={() => toggleAdminStatus(user.id, user.is_staff)}
                     >
@@ -132,63 +101,6 @@ const ManageUsers = () => {
           </tbody>
         </Table>
       </div>
-
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add New User</Modal.Title>
-        </Modal.Header>
-        <form onSubmit={handleSubmit}>
-          <Modal.Body>
-            <Form.Group className="mb-3">
-              <Form.Label>Username *</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Email *</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Password *</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="Admin User"
-                name="is_staff"
-                checked={formData.is_staff}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" type="submit">
-              Create User
-            </Button>
-          </Modal.Footer>
-        </form>
-      </Modal>
     </div>
   );
 };
