@@ -1,0 +1,125 @@
+.admin-add-user-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #f9f8f8;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding-top: 60px;
+}
+
+.admin-add-user-container h2 {
+  font-weight: 800;
+  color: #000;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+}
+
+/* Card for form */
+.admin-add-user-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Row for each input with label on left */
+.admin-add-user-card .form-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-add-user-card .form-row label {
+  width: 120px;
+  font-weight: 600;
+  color: #000;
+}
+
+.admin-add-user-card .form-row input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Checkbox row */
+.admin-add-user-card .checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  color: #000;
+}
+
+/* Buttons */
+.admin-add-user-container .button-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.admin-add-user-container .btn-primary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background-color: #0738f1;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.admin-add-user-container .btn-primary:hover {
+  background-color: #002ed9;
+}
+
+/* Message styling */
+.message {
+  text-align: center;
+  margin-top: 15px;
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .admin-add-user-card {
+    width: 100%;
+  }
+
+  .admin-add-user-card .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-add-user-card .form-row label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  /* Success message */
+.message.success {
+  text-align: center;
+  margin-top: 15px;
+  color: #28a745;
+  font-weight: 600;
+}
+
+/* Error message */
+.message.error {
+  text-align: center;
+  margin-top: 15px;
+  color: #dc3545;
+  font-weight: 600;
+}
+
+}

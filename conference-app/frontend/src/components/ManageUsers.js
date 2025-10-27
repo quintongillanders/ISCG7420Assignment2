@@ -42,7 +42,7 @@ const ManageUsers = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h3>User Management</h3>
-        <Button variant="primary" onClick={() => navigate('/create-user')}>
+        <Button variant="primary" onClick={() => navigate('/admin/create-user')}>
           Add New User
         </Button>
       </div>
