@@ -27,7 +27,6 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  // Common link/button styles
   const linkStyle = {
     color: '#fff',
     textDecoration: 'none',
@@ -38,41 +37,94 @@ const Navbar = () => {
   };
 
   const hoverEffect = {
-    backgroundColor: 'rgba(255,255,255,0.2)'
+    backgroundColor: 'rgba(255,255,255,0.2)',
   };
 
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '16px 32px',
-      backgroundColor: '#f60505',
-      color: '#fff',
-      position: 'sticky',
-      top: 0,
-      zIndex: 1000
-    }}>
+    <nav
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '16px 32px',
+        backgroundColor: '#f60505',
+        color: '#fff',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+      }}
+    >
       {/* Left: Logo */}
-      <div>
-        <Link to="/" style={{ ...linkStyle, fontWeight: 'bold', fontSize: '20px' }}>
-          Te Whare Runanga
-        </Link>
+      <div
+        style={{
+          fontWeight: 'bold',
+          fontSize: '20px',
+          color: '#fff',
+          cursor: 'default',
+        }}
+      >
+        Te Whare Rūnanga
       </div>
 
-      {/* Center: Make Reservation */}
-     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        {isLoggedIn && (
+      {/* Center: Navigation Tabs (only if logged in) */}
+      {isLoggedIn && (
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <Link
+            to="/"
+            style={linkStyle}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = 'transparent')
+            }
+          >
+            Rooms List
+          </Link>
+
+          <Link
+            to="/my-reservations"
+            style={linkStyle}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = 'transparent')
+            }
+          >
+            My Reservations
+          </Link>
+
+          <Link
+            to="/make-reservation"
+            style={linkStyle}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = 'transparent')
+            }
+          >
+            Make Reservation
+          </Link>
+
           <Link
             to="/admin"
             style={linkStyle}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = 'transparent')
+            }
           >
             Admin Panel
           </Link>
-        )}
+        </div>
+      )}
 
+      {/* Right: Auth Buttons */}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
@@ -80,10 +132,14 @@ const Navbar = () => {
               ...linkStyle,
               background: 'none',
               border: '1px solid #fff',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = 'transparent')
+            }
           >
             Logout
           </button>
@@ -92,16 +148,24 @@ const Navbar = () => {
             <Link
               to="/login"
               style={linkStyle}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = 'transparent')
+              }
             >
               Login
             </Link>
             <Link
               to="/register"
               style={linkStyle}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = 'transparent')
+              }
             >
               Register
             </Link>
