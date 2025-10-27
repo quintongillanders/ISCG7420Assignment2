@@ -18,7 +18,7 @@
   letter-spacing: 0.5px;
 }
 
-/* Card for form */
+
 .admin-create-room-card {
   display: flex;
   flex-direction: column;
@@ -30,7 +30,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Row for each input with label on left */
+
 .admin-create-room-card .form-row {
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@
   font-size: 14px;
 }
 
-/* Buttons */
+
 .admin-create-room-container .button-row {
   display: flex;
   justify-content: center;
@@ -88,7 +88,6 @@
   background-color: #0738f1;
 }
 
-/* Responsive */
 @media (max-width: 576px) {
   .admin-create-room-card {
     width: 100%;

@@ -9,25 +9,27 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+      e.preventDefault();
+      setError('');
 
-    try {
-      const response = await axios.post('http://localhost:8000/api/token/', {
-        username: username,
-        password: password
-      });
+      try {
+        const response = await axios.post('http://localhost:8000/api-token-auth/', {
+          username: username,
+          password: password
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-
-      navigate('/');
-    } catch (err) {
-      console.error(err.response ? err.response.data : err);
-      setError('Login failed. Incorrect username or password');
-    }
-  };
+        localStorage.setItem('access_token', response.data.token);  // Changed from 'access'
+        axios.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;  // Changed from 'Bearer'
+        navigate('/');
+      } catch (err) {
+        console.error(err.response ? err.response.data : err);
+        setError('Login failed. Please check your credentials and try again.');
+      }
+    };
 
   return (
     <div style={{ maxWidth: '400px', margin: '50px auto' }}>
