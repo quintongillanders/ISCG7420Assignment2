@@ -54,7 +54,7 @@ const Navbar = () => {
         zIndex: 1000,
       }}
     >
-      {/* Left: Logo */}
+      {/* Logo */}
       <div
         style={{
           fontWeight: 'bold',
@@ -66,7 +66,7 @@ const Navbar = () => {
         Te Whare Rūnanga
       </div>
 
-      {/* Center: Navigation Tabs (only if logged in) */}
+      {/* Navigation Tabs (only if logged in) */}
       {isLoggedIn && (
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <Link
@@ -83,7 +83,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/my-reservations"
+            to="/reservation-list"
             style={linkStyle}
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = hoverEffect.backgroundColor)
@@ -123,7 +123,7 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Right: Auth Buttons */}
+      {/* Auth Buttons */}
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         {isLoggedIn ? (
           <button
