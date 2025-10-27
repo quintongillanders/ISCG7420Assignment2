@@ -54,70 +54,76 @@ const AdminCreateReservation = () => {
 
   return (
     <div className="admin-create-reservation-container">
-      <h3>Make a Reservation for User</h3>
+        <h3>Make a Reservation for a User</h3>
 
-      <div className="admin-create-reservation-card">
-        <div className="label-column">
-          <p>User:</p>
-          <p>Room:</p>
-          <p>Date:</p>
-          <p>Start time:</p>
-          <p>End time:</p>
-        </div>
-
-        <div className="form-column">
+        <div className="admin-create-reservation-card">
           <Form onSubmit={handleSubmit}>
-            <Form.Select
-              name="user"
-              value={formData.user}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">----------</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username}
-                </option>
-              ))}
-            </Form.Select>
+            <div className="form-row">
+              <label>User:</label>
+              <Form.Select
+                name="user"
+                value={formData.user}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">----------</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.username}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
 
-            <Form.Select
-              name="room"
-              value={formData.room}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">----------</option>
-              {rooms.map((room) => (
-                <option key={room.id} value={room.id}>
-                  {room.name}
-                </option>
-              ))}
-            </Form.Select>
+            <div className="form-row">
+              <label>Room:</label>
+              <Form.Select
+                name="room"
+                value={formData.room}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">----------</option>
+                {rooms.map((room) => (
+                  <option key={room.id} value={room.id}>
+                    {room.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
 
-            <Form.Control
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="form-row">
+              <label>Date:</label>
+              <Form.Control
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
 
-            <Form.Control
-              type="time"
-              name="start_time"
-              value={formData.start_time}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="form-row">
+              <label>Start Time:</label>
+              <Form.Control
+                type="time"
+                name="start_time"
+                value={formData.start_time}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
 
-            <Form.Control
-              type="time"
-              name="end_time"
-              value={formData.end_time}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="form-row">
+              <label>End Time:</label>
+              <Form.Control
+                type="time"
+                name="end_time"
+                value={formData.end_time}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
 
             <div className="button-row">
               <Button type="submit" className="btn-primary">
@@ -134,7 +140,6 @@ const AdminCreateReservation = () => {
           </Form>
         </div>
       </div>
-    </div>
   );
 };
 

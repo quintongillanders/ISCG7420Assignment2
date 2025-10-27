@@ -67,32 +67,45 @@ const MakeReservation = () => {
   };
 
   return (
-    <div className="reservation-container">
+    <div className="make-reservation-container">
       <h2>Make Reservation</h2>
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
-      <form onSubmit={handleSubmit} className="reservation-form">
-        <label>Room:</label>
-        <select name="room" value={formData.room} onChange={handleChange} required>
-          <option value="">Select a room</option>
-          {rooms.map(room => (
-            <option key={room._id} value={room._id}>
-              {room.name} (Capacity: {room.capacity})
-            </option>
-          ))}
-        </select>
 
-        <label>Date:</label>
-        <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+      <div className="make-reservation-card">
+        <form onSubmit={handleSubmit}>
+          <div className="form-row">
+            <label>Room:</label>
+            <select name="room" value={formData.room} onChange={handleChange} required>
+              <option value="">Select a room</option>
+              {rooms.map(room => (
+                <option key={room._id} value={room._id}>
+                  {room.name} (Capacity: {room.capacity})
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <label>Start Time:</label>
-        <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required />
+          <div className="form-row">
+            <label>Date:</label>
+            <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+          </div>
 
-        <label>End Time:</label>
-        <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required />
+          <div className="form-row">
+            <label>Start Time:</label>
+            <input type="time" name="startTime" value={formData.startTime} onChange={handleChange} required />
+          </div>
 
-        <button type="submit" className="reserve-button">Reserve</button>
-      </form>
+          <div className="form-row">
+            <label>End Time:</label>
+            <input type="time" name="endTime" value={formData.endTime} onChange={handleChange} required />
+          </div>
+
+          <div className="button-row">
+            <button type="submit" className="btn-primary">Reserve</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

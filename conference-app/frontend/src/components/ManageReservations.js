@@ -33,7 +33,7 @@ const ManageReservations = ({ navigate }) => { // <-- receive navigate from pare
         <h3>Manage Reservations</h3>
         <Button
           variant="primary"
-          onClick={() => navigate('/admin/create-reservation')} // <-- navigate to form
+          onClick={() => navigate('/admin/create-reservation')}
         >
           Create Reservation
         </Button>

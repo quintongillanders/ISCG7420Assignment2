@@ -72,14 +72,9 @@ const EditRoom = () => {
       )}
 
       <div className="admin-create-reservation-card">
-        <div className="label-column">
-          <p>Name:</p>
-          <p>Capacity:</p>
-          <p>Location:</p>
-        </div>
-
-        <div className="form-column">
-          <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
+          <div className="form-row">
+            <label>Name:</label>
             <Form.Control
               type="text"
               name="name"
@@ -88,7 +83,10 @@ const EditRoom = () => {
               placeholder="Room name"
               required
             />
+          </div>
 
+          <div className="form-row">
+            <label>Capacity:</label>
             <Form.Control
               type="number"
               name="capacity"
@@ -97,7 +95,10 @@ const EditRoom = () => {
               placeholder="Capacity"
               required
             />
+          </div>
 
+          <div className="form-row">
+            <label>Location:</label>
             <Form.Control
               type="text"
               name="location"
@@ -105,23 +106,24 @@ const EditRoom = () => {
               onChange={handleChange}
               placeholder="Location (optional)"
             />
+          </div>
 
-            <div className="button-row">
-              <Button type="submit" className="btn-primary">
-                Update Room
-              </Button>
-              <Button
-                type="button"
-                className="btn-secondary"
-                onClick={() => navigate('/admin')}
-              >
-                Cancel
-              </Button>
-            </div>
-          </Form>
-        </div>
+          <div className="button-row">
+            <Button type="submit" className="btn-primary">
+              Update Room
+            </Button>
+            <Button
+              type="button"
+              className="btn-secondary"
+              onClick={() => navigate('/admin')}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Form>
       </div>
     </div>
+
   );
 };
 
