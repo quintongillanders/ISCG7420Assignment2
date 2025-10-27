@@ -1,0 +1,114 @@
+.admin-create-reservation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #f9f8f8;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  padding-top: 60px;
+}
+
+.admin-create-reservation-container h3 {
+  font-weight: 800;
+  color: #000;
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+}
+
+.admin-create-reservation-card {
+  display: flex;
+  background-color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-create-reservation-card .label-column {
+  background-color: #d60000;
+  color: #fff;
+  font-weight: 600;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 160px;
+}
+
+.admin-create-reservation-card .label-column p {
+  margin: 0;
+  padding: 15px 0;
+}
+
+.admin-create-reservation-card .form-column {
+  padding: 25px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.admin-create-reservation-card select,
+.admin-create-reservation-card input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-create-reservation-container .button-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.admin-create-reservation-container .btn-primary,
+.admin-create-reservation-container .btn-secondary {
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+.admin-create-reservation-container .btn-primary {
+  background-color: #0738f1;
+  color: white;
+}
+
+.admin-create-reservation-container .btn-primary:hover {
+  background-color: #002ed9;
+}
+
+.admin-create-reservation-container .btn-secondary {
+  background-color: #0a58ca;
+  color: white;
+}
+
+.admin-create-reservation-container .btn-secondary:hover {
+  background-color: #0738f1;
+}
+
+@media (max-width: 576px) {
+  .admin-create-reservation-card {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .admin-create-reservation-card .label-column {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .admin-create-reservation-card .form-column {
+    width: 100%;
+  }
+}

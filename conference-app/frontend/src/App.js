@@ -14,6 +14,7 @@ import ManageRooms from './components/ManageRooms';
 import AdminAddUser from './components/AdminAddUser';
 import AdminAddRoom from './components/AdminAddRoom';
 import ReservationList from "./components/ReservationList";
+import EditRoom from "./components/EditRoom";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/admin/manage-rooms" element={<ManageRooms />} />
           <Route path="/admin/create-user" element={<AdminAddUser />} />
           <Route path="/admin/create-room" element={<AdminAddRoom />} />
+          <Route path="/admin/edit-room/:userId" element={<EditRoom />} />
 
       </Routes>
       <Footer />

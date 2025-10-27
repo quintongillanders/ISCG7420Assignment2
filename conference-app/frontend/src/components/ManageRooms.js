@@ -30,7 +30,7 @@ const ManageRooms = () => {
 
   // Navigate to edit room
   const handleEdit = (roomId) => {
-    navigate(`/admin/create-room/${roomId}`);
+    navigate(`/admin/edit-room/${roomId}`);
   };
 
   // Delete room
