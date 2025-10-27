@@ -40,22 +40,8 @@ const RoomList = () => {
                 cursor: 'pointer'
               }}
             >
-              Make Reservation
+              Book Room
             </button>
-              <button
-                  onClick={() => editReservation(room._id)}
-                  style={{
-                    marginTop: '12px',
-                    padding: '8px 12px',
-                    backgroundColor: '#0738f1',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Edit Reservation
-                </button>
           </div>
         ))}
       </div>
