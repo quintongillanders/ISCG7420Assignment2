@@ -4,6 +4,7 @@ import {
   deleteReservation,
   updateReservation,
 } from "../api";
+import "./MyReservations.css";
 
 function MyReservations() {
   const [reservations, setReservations] = useState([]);
@@ -13,9 +14,8 @@ function MyReservations() {
     end_time: "",
   });
 
-  const token = localStorage.getItem("token"); // ✅ unified key name
+  const token = localStorage.getItem("token");
 
-  // Fetch reservations
   const fetchReservations = async () => {
     try {
       const res = await getReservations(token);
@@ -34,7 +34,6 @@ function MyReservations() {
     fetchReservations();
   }, []);
 
-  // Convert ISO to local datetime for input fields
   const formatForInput = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -43,7 +42,6 @@ function MyReservations() {
     return localDate.toISOString().slice(0, 16);
   };
 
-  // Start editing a reservation
   const startEditing = (reservation) => {
     setEditingId(reservation.id);
     setEditedData({
@@ -52,13 +50,11 @@ function MyReservations() {
     });
   };
 
-  // Cancel editing
   const cancelEdit = () => {
     setEditingId(null);
     setEditedData({ start_time: "", end_time: "" });
   };
 
-  // Save updated reservation
   const saveEdit = async (id) => {
     if (!editedData.start_time || !editedData.end_time) {
       alert("Please select both start and end times.");
@@ -80,7 +76,7 @@ function MyReservations() {
       };
 
       await updateReservation(id, formattedData, token);
-      alert("✅ Reservation updated successfully!");
+      alert("Reservation updated successfully!");
       setEditingId(null);
       fetchReservations();
     } catch (error) {
@@ -89,12 +85,11 @@ function MyReservations() {
     }
   };
 
-  // Delete a reservation
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this reservation?")) return;
     try {
       await deleteReservation(id, token);
-      alert("🗑️ Reservation deleted successfully!");
+      alert("Reservation deleted successfully!");
       fetchReservations();
     } catch (error) {
       console.error("Error deleting reservation:", error.response?.data || error);
@@ -103,17 +98,13 @@ function MyReservations() {
   };
 
   return (
-    <div className="container" style={{ margin: "30px" }}>
-      <h2>My Reservations</h2>
+    <div className="reservations-container">
+      <h2 className="reservations-header">My Reservations</h2>
 
       {reservations.length === 0 ? (
-        <p>No reservations found.</p>
+        <div className="no-reservations">No reservations found.</div>
       ) : (
-        <table
-          border="1"
-          cellPadding="10"
-          style={{ borderCollapse: "collapse", width: "100%" }}
-        >
+        <table className="reservations-table">
           <thead>
             <tr>
               <th>Room</th>
@@ -132,6 +123,7 @@ function MyReservations() {
                     <td>
                       <input
                         type="datetime-local"
+                        className="datetime-input"
                         value={editedData.start_time}
                         onChange={(e) =>
                           setEditedData({
@@ -144,6 +136,7 @@ function MyReservations() {
                     <td>
                       <input
                         type="datetime-local"
+                        className="datetime-input"
                         value={editedData.end_time}
                         onChange={(e) =>
                           setEditedData({
@@ -154,8 +147,20 @@ function MyReservations() {
                       />
                     </td>
                     <td>
-                      <button onClick={() => saveEdit(res.id)}>Save</button>
-                      <button onClick={cancelEdit}>Cancel</button>
+                      <div className="action-buttons">
+                        <button
+                          className="btn btn-save"
+                          onClick={() => saveEdit(res.id)}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="btn btn-cancel"
+                          onClick={cancelEdit}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </td>
                   </>
                 ) : (
@@ -173,8 +178,20 @@ function MyReservations() {
                       })}
                     </td>
                     <td>
-                      <button onClick={() => startEditing(res)}>Edit</button>
-                      <button onClick={() => handleDelete(res.id)}>Delete</button>
+                      <div className="action-buttons">
+                        <button
+                          className="btn btn-edit"
+                          onClick={() => startEditing(res)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-delete"
+                          onClick={() => handleDelete(res.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </>
                 )}

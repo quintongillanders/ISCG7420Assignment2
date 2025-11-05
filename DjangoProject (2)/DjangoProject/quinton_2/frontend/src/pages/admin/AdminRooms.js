@@ -14,8 +14,7 @@ export default function AdminRooms() {
     name: "",
     capacity: "",
     description: "",
-    image: null,
-    room_type: "standard"
+    location: ""  
   });
 
   const token = localStorage.getItem("token");
@@ -35,43 +34,35 @@ export default function AdminRooms() {
   };
 
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     fetchRooms();
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "image") {
-      setNewRoom({ ...newRoom, [name]: files[0] });
-    } else {
-      setNewRoom({ ...newRoom, [name]: value });
-    }
+    const { name, value } = e.target;
+    setNewRoom({ ...newRoom, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.keys(newRoom).forEach(key => {
-      if (newRoom[key] !== null) {
-        formData.append(key, newRoom[key]);
-      }
-    });
 
     try {
       if (editingId) {
-        await axios.put(`${BASE_URL}rooms/${editingId}/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await axios.put(
+          `${BASE_URL}rooms/${editingId}/`,
+          newRoom,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         alert("Room updated successfully!");
       } else {
-        await axios.post(`${BASE_URL}rooms/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await axios.post(
+          `${BASE_URL}rooms/`,
+          newRoom,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         alert("Room added successfully!");
       }
       setShowForm(false);
@@ -80,8 +71,7 @@ export default function AdminRooms() {
         name: "",
         capacity: "",
         description: "",
-        image: null,
-        room_type: "standard"
+        location: ""
       });
       fetchRooms();
     } catch (error) {
@@ -96,8 +86,7 @@ export default function AdminRooms() {
       name: room.name,
       capacity: room.capacity,
       description: room.description,
-      image: room.image,
-      room_type: room.room_type
+      location: room.location || ""
     });
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -125,25 +114,24 @@ export default function AdminRooms() {
       name: "",
       capacity: "",
       description: "",
-      image: null,
-      room_type: "standard"
+      location: ""
     });
   };
 
   if (isLoading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">Loading rooms...</div>;
   }
 
   return (
     <div className="admin-rooms">
-      <div className="admin-header">
+      <div className="page-header">
         <button
           className="btn btn-back"
-          onClick={() => navigate('/admin-dashboard')}
+          onClick={() => navigate("/admin/dashboard")}
         >
           &larr; Back to Dashboard
         </button>
-        <h2>Manage Rooms</h2>
+        <h2>Manage Conference Rooms</h2>
       </div>
 
       <div className="rooms-controls">
@@ -156,7 +144,7 @@ export default function AdminRooms() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="room-form" encType="multipart/form-data">
+        <form onSubmit={handleSubmit} className="room-form">
           <h3>{editingId ? 'Edit Room' : 'Add New Room'}</h3>
           <div className="form-row">
             <div className="form-group">
@@ -166,6 +154,7 @@ export default function AdminRooms() {
                 name="name"
                 value={newRoom.name}
                 onChange={handleInputChange}
+                placeholder="e.g., Conference Room A"
                 required
               />
             </div>
@@ -177,9 +166,22 @@ export default function AdminRooms() {
                 min="1"
                 value={newRoom.capacity}
                 onChange={handleInputChange}
+                placeholder="e.g., 10"
                 required
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label>Location</label>
+            <input
+              type="text"
+              name="location"
+              value={newRoom.location}
+              onChange={handleInputChange}
+              placeholder="e.g., First Floor, Building A"
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -188,32 +190,8 @@ export default function AdminRooms() {
               name="description"
               value={newRoom.description}
               onChange={handleInputChange}
+              placeholder="Brief description of the room"
               rows="3"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Room Type</label>
-            <select
-              name="room_type"
-              value={newRoom.room_type}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="standard">Standard</option>
-              <option value="deluxe">Deluxe</option>
-              <option value="suite">Suite</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Room Image</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleInputChange}
-              required={!editingId}
             />
           </div>
 
@@ -236,10 +214,10 @@ export default function AdminRooms() {
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>Name</th>
-              <th>Type</th>
               <th>Capacity</th>
+              <th>Location</th>
+              <th>Description</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -247,10 +225,10 @@ export default function AdminRooms() {
             {rooms.length > 0 ? (
               rooms.map((room) => (
                 <tr key={room.id}>
-                  <td>{room.id}</td>
                   <td>{room.name}</td>
-                  <td>{room.room_type}</td>
                   <td>{room.capacity}</td>
+                  <td>{room.location || '-'}</td>
+                  <td>{room.description || '-'}</td>
                   <td className="actions">
                     <button
                       className="btn btn-edit"
