@@ -1,101 +1,35 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
 import "./AdminUsers.css";
 
 export default function AdminUsers() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     is_staff: false
   });
+
   const token = localStorage.getItem("token");
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}users/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to fetch users. Only admins can access this page.");
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const config = {
+      const response = await axios.get(`${BASE_URL}users/`, {
         headers: { Authorization: `Bearer ${token}` }
-      };
-
-      if (editingUser) {
-        await axios.put(`${BASE_URL}users/${editingUser.id}/`, formData, config);
-        alert("User updated successfully!");
-      } else {
-        await axios.post(`${BASE_URL}users/`, formData, config);
-        alert("User created successfully!");
-      }
-
-      setEditingUser(null);
-      setFormData({ username: "", email: "", password: "", is_staff: false });
-      setShowForm(false);
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert(`Failed to ${editingUser ? "update" : "create"} user.`);
-    }
-  };
-
-  const editUser = (user) => {
-    setEditingUser(user);
-    setFormData({
-      username: user.username,
-      email: user.email,
-      password: "",
-      is_staff: user.is_staff
-    });
-    setShowForm(true);
-  };
-
-  const deleteUser = async (id) => {
-    if (!window.confirm("Delete this user?")) return;
-    try {
-      await axios.delete(`${BASE_URL}users/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
       });
-      alert("User deleted successfully.");
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete user.");
-    }
-  };
-
-  const toggleAdmin = async (user) => {
-    try {
-      await axios.put(
-        `${BASE_URL}users/${user.id}/`,
-        { ...user, is_staff: !user.is_staff },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update user role.");
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      alert("Failed to load users. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -103,135 +37,209 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingId) {
+        await axios.put(`${BASE_URL}users/${editingId}/`, formData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert("User updated successfully!");
+      } else {
+        await axios.post(`${BASE_URL}users/`, formData, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert("User created successfully!");
+      }
+      setShowForm(false);
+      setEditingId(null);
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        is_staff: false
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error("Error saving user:", error);
+      alert("Failed to save user. Please try again.");
+    }
+  };
+
+  const handleEdit = (user) => {
+    setEditingId(user.id);
+    setFormData({
+      username: user.username,
+      email: user.email,
+      password: "",
+      is_staff: user.is_staff
+    });
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      try {
+        await axios.delete(`${BASE_URL}users/${id}/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert("User deleted successfully!");
+        fetchUsers();
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        alert("Failed to delete user. Please try again.");
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingId(null);
+    setFormData({
+      username: "",
+      email: "",
+      password: "",
+      is_staff: false
+    });
+  };
+
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
+
   return (
-    <div className="admin-users-container">
-      <h2>Manage Users</h2>
+    <div className="admin-users">
+      <div className="admin-header">
+        <button
+          className="btn btn-back"
+          onClick={() => navigate('/admin-dashboard')}
+        >
+          &larr; Back to Dashboard
+        </button>
+        <h2>Manage Users</h2>
+      </div>
 
-      <div className="users-table">
-        <div className="table-header">
-          <button
-            className="btn btn-add-user"
-            onClick={() => {
-              setShowForm(true);
-              setEditingUser(null);
-              setFormData({ username: "", email: "", password: "", is_staff: false });
-            }}
-          >
-            + Add User
-          </button>
-        </div>
+      <div className="users-controls">
+        <button
+          className={`btn ${showForm ? 'btn-secondary' : 'btn-add'}`}
+          onClick={() => setShowForm(!showForm)}
+        >
+          {showForm ? 'Cancel' : '+ Add New User'}
+        </button>
+      </div>
 
-        {users.length === 0 ? (
-          <p>No users found.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Admin Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
+      {showForm && (
+        <form onSubmit={handleSubmit} className="user-form">
+          <h3>{editingId ? 'Edit User' : 'Add New User'}</h3>
+          <div className="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required={!editingId}
+              placeholder={editingId ? "Leave blank to keep current password" : ""}
+            />
+          </div>
+          <div className="form-group checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                name="is_staff"
+                checked={formData.is_staff}
+                onChange={handleInputChange}
+              />
+              Admin User
+            </label>
+          </div>
+          <div className="form-actions">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-primary">
+              {editingId ? 'Update User' : 'Add User'}
+            </button>
+          </div>
+        </form>
+      )}
+
+      <div className="users-list">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.length > 0 ? (
+              users.map((user) => (
                 <tr key={user.id}>
                   <td>{user.id}</td>
                   <td>{user.username}</td>
                   <td>{user.email}</td>
-                  <td>
-                    <span className={`admin-status ${user.is_staff ? "admin" : ""}`}>
-                      {user.is_staff ? "Yes" : "No"}
-                    </span>
-                  </td>
+                  <td>{user.is_staff ? 'Admin' : 'User'}</td>
                   <td className="actions">
-                    <button className="btn btn-edit" onClick={() => editUser(user)}>
+                    <button
+                      className="btn btn-edit"
+                      onClick={() => handleEdit(user)}
+                    >
                       Edit
                     </button>
                     <button
-                      className={`btn ${user.is_staff ? "btn-remove-admin" : "btn-make-admin"}`}
-                      onClick={() => toggleAdmin(user)}
+                      className="btn btn-delete"
+                      onClick={() => handleDelete(user.id)}
                     >
-                      {user.is_staff ? "Remove Admin" : "Make Admin"}
+                      Delete
                     </button>
-                    {!user.is_staff && (
-                      <button className="btn btn-delete" onClick={() => deleteUser(user.id)}>
-                        Delete
-                      </button>
-                    )}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="no-users">No users found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
-
-      {showForm && (
-        <div className="user-form-container">
-          <h3>{editingUser ? "Edit User" : "Add New User"}</h3>
-          <form onSubmit={handleSubmit} className="user-form">
-            <div className="form-group">
-              <label>Username:</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>Password:</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required={!editingUser}
-                placeholder={editingUser ? "Leave blank to keep current password" : ""}
-              />
-            </div>
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="is_staff"
-                  checked={formData.is_staff}
-                  onChange={handleInputChange}
-                />
-                Admin User
-              </label>
-            </div>
-            <div className="form-actions">
-              <button type="submit" className="btn btn-primary">
-                {editingUser ? "Update User" : "Add User"}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  setEditingUser(null);
-                  setShowForm(false);
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   );
 }

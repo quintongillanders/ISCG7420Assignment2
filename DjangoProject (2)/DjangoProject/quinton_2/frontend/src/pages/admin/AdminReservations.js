@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
 import "./AdminReservations.css";
 
 export default function AdminReservations() {
+  const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [users, setUsers] = useState([]);
@@ -104,8 +106,18 @@ export default function AdminReservations() {
 
   return (
     <div className="admin-reservations">
-      <div className="reservations-header">
+      <div className="admin-header">
+        <button
+          className="btn btn-back"
+          onClick={() => navigate('/admin-dashboard')}
+        >
+          &larr; Back to Dashboard
+        </button>
+
         <h2>Manage Reservations</h2>
+      </div>
+
+      <div className="reservations-controls">
         <button
           className={`btn ${showAddForm ? 'btn-secondary' : 'btn-add'}`}
           onClick={() => setShowAddForm(!showAddForm)}
