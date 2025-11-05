@@ -41,8 +41,8 @@ export const deleteReservation = (id, token) =>
 export const testAPI = async () => {
   try {
     const response = await API.get("");
-    console.log("✅ API connection successful:", response.status);
+    console.log("API connection successful:", response.status);
   } catch (error) {
-    console.error("❌ API connection failed:", error.message);
+    console.error(" API connection failed:", error.message);
   }
 };

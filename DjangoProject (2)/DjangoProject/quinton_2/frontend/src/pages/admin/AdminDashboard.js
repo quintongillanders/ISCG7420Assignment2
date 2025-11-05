@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function AdminDashboard() {
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>🛠 Admin Dashboard</h1>
+      <h1>Admin Dashboard</h1>
       <p>Welcome, Admin! Manage all resources below.</p>
 
       <div style={{ marginTop: "30px" }}>
@@ -21,7 +21,7 @@ export default function AdminDashboard() {
             borderRadius: "8px",
           }}
         >
-          👤 Manage Users
+          Manage Users
         </Link>
 
         <Link
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
             borderRadius: "8px",
           }}
         >
-          🏢 Manage Rooms
+          Manage Rooms
         </Link>
 
         <Link
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
             borderRadius: "8px",
           }}
         >
-          📅 Manage Reservations
+          Manage Reservations
         </Link>
       </div>
     </div>
