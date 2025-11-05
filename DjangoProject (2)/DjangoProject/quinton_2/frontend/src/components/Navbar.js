@@ -16,58 +16,94 @@ export default function Navbar() {
     localStorage.removeItem("access");
     localStorage.removeItem("is_admin");
     localStorage.removeItem("is_staff");
-    alert("You’ve been logged out.");
+    alert("You've been logged out.");
     navigate("/");
   };
 
   return (
     <nav
       style={{
-        backgroundColor: "#1e1e1e",
+        backgroundColor: "#f60404",
         color: "white",
-        padding: "10px",
+        padding: "10px 20px",
         display: "flex",
         alignItems: "center",
-        gap: "15px",
+        position: "relative",
       }}
     >
-      {token ? (
-        <>
-          {/* ---- Regular User Links ---- */}
-          <Link to="/rooms" style={{ color: "white", textDecoration: "none" }}>
-            All Rooms
-          </Link>
+      {/* Left-aligned Brand Name */}
+      <div style={{
+        marginRight: "auto",
+        fontWeight: "bold",
+        fontSize: "1.2em"
+      }}>
+        Te Whare Ruanga
+      </div>
 
-          <Link to="/book" style={{ color: "white", textDecoration: "none" }}>
-            Book Room
-          </Link>
+      {/* Center-aligned Navigation Links */}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        flexGrow: 1,
+        gap: "15px",
+        position: "absolute",
+        left: "50%",
+        transform: "translateX(-50%)"
+      }}>
+        {token ? (
+          <>
+            <Link to="/rooms" style={{ color: "white", textDecoration: "none" }}>
+              All Rooms
+            </Link>
 
-          <Link
-            to="/my-reservations"
-            style={{ color: "white", textDecoration: "none" }}
-          >
-            My Reservations
-          </Link>
+            <Link to="/book" style={{ color: "white", textDecoration: "none" }}>
+              Book Room
+            </Link>
 
-          {/* ---- Admin Link ---- */}
-          {isAdmin && (
             <Link
-              to="/admin-dashboard"
+              to="/my-reservations"
+              style={{ color: "white", textDecoration: "none" }}
+            >
+              My Reservations
+            </Link>
+
+            {isAdmin && (
+              <Link
+                to="/admin-dashboard"
+                style={{
+                  color: "#f6f3f3",
+                  textDecoration: "none",
+                  fontWeight: "bold",
+                }}
+              >
+                Admin Dashboard
+              </Link>
+            )}
+          </>
+        ) : (
+          <>
+            <Link to="/" style={{ color: "white", textDecoration: "none" }}>
+              Login
+            </Link>
+            <Link
+              to="/register"
               style={{
-                color: "#ffd700",
+                color: "white",
                 textDecoration: "none",
-                fontWeight: "bold",
               }}
             >
-              Admin Dashboard
+              Register
             </Link>
-          )}
+          </>
+        )}
+      </div>
 
-          {/* ---- Logout Button ---- */}
+      {/* Right-aligned Logout Button */}
+      {token && (
+        <div style={{ marginLeft: "auto" }}>
           <button
             onClick={handleLogout}
             style={{
-              marginLeft: "auto",
               backgroundColor: "#f04e30",
               color: "white",
               border: "none",
@@ -78,23 +114,7 @@ export default function Navbar() {
           >
             Logout
           </button>
-        </>
-      ) : (
-        <>
-          <Link to="/" style={{ color: "white", textDecoration: "none" }}>
-            Login
-          </Link>
-          <Link
-            to="/register"
-            style={{
-              color: "white",
-              marginLeft: "10px",
-              textDecoration: "none",
-            }}
-          >
-            Register
-          </Link>
-        </>
+        </div>
       )}
     </nav>
   );
