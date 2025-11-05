@@ -127,7 +127,7 @@ export default function AdminRooms() {
       <div className="page-header">
         <button
           className="btn btn-back"
-          onClick={() => navigate("/admin/dashboard")}
+          onClick={() => navigate("/admin-dashboard")}
         >
           &larr; Back to Dashboard
         </button>

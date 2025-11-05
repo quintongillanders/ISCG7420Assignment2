@@ -96,7 +96,7 @@ tr:hover {
 }
 
 .btn-add {
-  background-color: #9b59b6;
+  background-color: #0738f1;
   color: white;
   padding: 10px 20px;
   font-size: 0.95em;
@@ -104,7 +104,7 @@ tr:hover {
 }
 
 .btn-add:hover {
-  background-color: #8e44ad;
+  background-color: #0738f1;
   opacity: 1;
 }
 
@@ -203,7 +203,7 @@ tr:hover {
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #9b59b6;
+  border-color: #0738f1;
   outline: none;
   box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.2);
 }

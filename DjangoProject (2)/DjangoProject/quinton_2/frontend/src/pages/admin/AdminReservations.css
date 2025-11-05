@@ -79,12 +79,12 @@ tr:hover {
 }
 
 .btn-delete {
-  background-color: #e74c3c;
+  background-color: #f60404;
   color: white;
 }
 
 .btn-delete:hover {
-  background-color: #c0392b;
+  background-color: #f60404;
   opacity: 0.9;
 }
 
