@@ -32,26 +32,35 @@ export default function Navbar() {
       }}
     >
       {/* Left-aligned Brand Name */}
-      <div style={{
-        marginRight: "auto",
-        fontWeight: "bold",
-        fontSize: "1.2em"
-      }}>
+      <div
+        style={{
+          marginRight: "auto",
+          fontWeight: "bold",
+          fontSize: "1.2em",
+        }}
+      >
         Te Whare Ruanga
       </div>
 
       {/* Center-aligned Navigation Links */}
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        flexGrow: 1,
-        gap: "15px",
-        position: "absolute",
-        left: "50%",
-        transform: "translateX(-50%)"
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexGrow: 1,
+          gap: "15px",
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
         {token ? (
           <>
+            {/* 🏠 Home Link Added */}
+            <Link to="/dashboard" style={{ color: "white", textDecoration: "none" }}>
+              Home
+            </Link>
+
             <Link to="/rooms" style={{ color: "white", textDecoration: "none" }}>
               All Rooms
             </Link>
