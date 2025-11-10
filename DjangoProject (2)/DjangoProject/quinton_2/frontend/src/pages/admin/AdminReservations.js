@@ -15,7 +15,8 @@ export default function AdminReservations() {
     user: "",
     room: "",
     start_time: "",
-    end_time: ""
+    end_time: "",
+    special_requests: ""
   });
 
   const token = localStorage.getItem("token");
@@ -54,37 +55,32 @@ export default function AdminReservations() {
   const createReservation = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_URL}reservations/`,
         {
-          user: newReservation.user,
-          room: newReservation.room,
-          start_time: new Date(newReservation.start_time).toISOString(),
-          end_time: new Date(newReservation.end_time).toISOString(),
+          user_id: newReservation.user,
+          room_id: newReservation.room,
+          start_time: newReservation.start_time,
+          end_time: newReservation.end_time,
+          special_requests: newReservation.special_requests,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-
       alert("Reservation created successfully!");
       setShowAddForm(false);
       setNewReservation({
         user: "",
         room: "",
         start_time: "",
-        end_time: ""
+        end_time: "",
+        special_requests: ""
       });
       fetchData();
     } catch (err) {
-      console.error("Error creating reservation:", {
-        error: err,
-        response: err.response?.data,
-      });
-      alert(`Failed to create reservation: ${err.response?.data?.message || 'Unknown error'}`);
+      console.error("Error creating reservation:", err);
+      alert("Failed to create reservation. Please try again.");
     }
   };
 
@@ -103,33 +99,21 @@ export default function AdminReservations() {
   };
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
     fetchData();
   }, []);
 
-  const formatDate = (dateString) => {
-    const options = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return new Date(dateString).toLocaleString(undefined, options);
-  };
+  if (isLoading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="admin-reservations">
-      <div className="page-header">
+      <div className="admin-header">
         <button
           className="btn btn-back"
-          onClick={() => navigate("/admin-dashboard")}
+          onClick={() => navigate('/admin-dashboard')}
         >
           &larr; Back to Dashboard
         </button>
+
         <h2>Manage Reservations</h2>
       </div>
 
@@ -142,104 +126,40 @@ export default function AdminReservations() {
         </button>
       </div>
 
-      {showAddForm && (
-        <form onSubmit={createReservation} className="reservation-form">
-          <h3>Add New Reservation</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label>User</label>
-              <select
-                name="user"
-                value={newReservation.user}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select User</option>
-                {users.map(user => (
-                  <option key={user.id} value={user.id}>
-                    {user.username || user.email}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Room</label>
-              <select
-                name="room"
-                value={newReservation.room}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Room</option>
-                {rooms.map(room => (
-                  <option key={room.id} value={room.id}>
-                    {room.name} (Capacity: {room.capacity})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Start Time</label>
-              <input
-                type="datetime-local"
-                name="start_time"
-                value={newReservation.start_time}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label>End Time</label>
-              <input
-                type="datetime-local"
-                name="end_time"
-                value={newReservation.end_time}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => setShowAddForm(false)}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              Create Reservation
-            </button>
-          </div>
-        </form>
-      )}
-
-      <div className="reservations-list">
-        {isLoading ? (
-          <div className="loading">Loading reservations...</div>
-        ) : reservations.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Room</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservations.map((reservation) => (
+      <div className="reservations-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Room</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reservations.length > 0 ? (
+              reservations.map((reservation) => (
                 <tr key={reservation.id}>
+                  <td>{reservation.id}</td>
                   <td>{reservation.user_name || 'N/A'}</td>
                   <td>{reservation.room_name || 'N/A'}</td>
-                  <td>{formatDate(reservation.start_time)}</td>
-                  <td>{formatDate(reservation.end_time)}</td>
-                  <td className="actions">
+                  <td>{new Date(reservation.start_time).toLocaleString()}</td>
+                  <td>{new Date(reservation.end_time).toLocaleString()}</td>
+                  <td>
+                    <span className={`status-badge ${
+                      new Date(reservation.end_time) < new Date() 
+                        ? 'status-completed' 
+                        : 'status-active'
+                    }`}>
+                      {new Date(reservation.end_time) < new Date()
+                        ? 'Completed'
+                        : 'Active'}
+                    </span>
+                  </td>
+                  <td>
                     <button
                       className="btn btn-delete"
                       onClick={() => deleteReservation(reservation.id)}
@@ -248,13 +168,104 @@ export default function AdminReservations() {
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="no-reservations">No reservations found.</div>
-        )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="no-reservations">No reservations found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
+
+      {showAddForm && (
+        <div className="add-reservation-form">
+          <h3>Create New Reservation</h3>
+          <form onSubmit={createReservation}>
+            <div className="form-row">
+              <div className="form-group">
+                <label>User</label>
+                <select
+                  name="user"
+                  value={newReservation.user}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select User</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.username} ({user.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Room</label>
+                <select
+                  name="room"
+                  value={newReservation.room}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Room</option>
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.name} (Capacity: {room.capacity})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Start Time</label>
+                <input
+                  type="datetime-local"
+                  name="start_time"
+                  value={newReservation.start_time}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>End Time</label>
+                <input
+                  type="datetime-local"
+                  name="end_time"
+                  value={newReservation.end_time}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Special Requests</label>
+              <textarea
+                name="special_requests"
+                value={newReservation.special_requests}
+                onChange={handleInputChange}
+                rows="3"
+              />
+            </div>
+
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowAddForm(false)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Create Reservation
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

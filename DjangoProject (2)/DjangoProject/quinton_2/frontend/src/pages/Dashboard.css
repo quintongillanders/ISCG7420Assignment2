@@ -1,0 +1,66 @@
+.dashboard {
+  text-align: center;
+  padding: 60px 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fff;
+}
+
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.dashboard-header p {
+  margin-top: 8px;
+  font-weight: 300;
+  font-size: 1rem;
+}
+
+
+.dashboard-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+
+.dashboard-button {
+  width: 250px;
+  padding: 15px 0;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.view-rooms {
+  background-color: #007bff;
+}
+.book-room {
+  background-color: #28a745;
+}
+.my-reservations {
+  background-color: #ffc107;
+  color: black;
+}
+
+/* Hover */
+.dashboard-button:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dashboard-button {
+    width: 80%;
+  }
+}

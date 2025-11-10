@@ -1,14 +1,26 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./Dashboard.css";
 
 export default function Dashboard() {
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Welcome to the Conference Room Reservation System</h2>
-      <p>Select an option below:</p>
-      <Link to="/rooms"><button>View Rooms</button></Link>
-      <Link to="/book"><button>Book a Room</button></Link>
-      <Link to="/my-reservations"><button>My Reservations</button></Link>
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <h1>Te Whare Ruanga Booking System</h1>
+        <p>Welcome! Please choose an option below.</p>
+      </div>
+
+      <div className="dashboard-actions">
+        <Link to="/rooms" className="dashboard-button view-rooms">
+          View Rooms
+        </Link>
+        <Link to="/book" className="dashboard-button book-room">
+          Book a Room
+        </Link>
+        <Link to="/my-reservations" className="dashboard-button my-reservations">
+          My Reservations
+        </Link>
+      </div>
     </div>
   );
 }
