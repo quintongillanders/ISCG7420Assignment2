@@ -6,6 +6,10 @@ export const BASE_URL = "http://127.0.0.1:8000/api/";
 // Create a reusable Axios instance
 const API = axios.create({
   baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
 });
 
 // Helper function to attach the JWT token automatically
@@ -16,7 +20,21 @@ const authHeader = (token) => ({
 // --- AUTH ---
 export const registerUser = (data) => API.post("register/", data);
 
-export const loginUser = (data) => API.post("token/", data);
+export const loginUser = async (data) => {
+  try {
+    console.log('Attempting login with data:', data);
+    const response = await API.post("token/", data);
+    console.log('Login successful, response:', response.data);
+    return response;
+  } catch (error) {
+    console.error('Login error:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    throw error;
+  }
+};
 
 // --- ROOMS ---
 export const getRooms = (token) => API.get("rooms/", authHeader(token));
