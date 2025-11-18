@@ -37,6 +37,8 @@ class ReservationSerializer(serializers.ModelSerializer):
     Adds easy-to-use frontend fields `room_name` and `user_name`.
     """
     user = UserSerializer(read_only=True)  # Nested user info
+    # Allow admins to pass a target user_id when creating on behalf of someone else
+    user_id = serializers.IntegerField(write_only=True, required=False)
     room_name = serializers.CharField(source='room.name', read_only=True)
     user_name = serializers.CharField(source='user.username', read_only=True)
 
@@ -45,6 +47,7 @@ class ReservationSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'user',
+            'user_id',
             'user_name',
             'room',
             'room_name',

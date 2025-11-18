@@ -20,19 +20,26 @@ const authHeader = (token) => ({
 // --- AUTH ---
 export const registerUser = (data) => API.post("register/", data);
 
-export const loginUser = async (data) => {
+export const loginUser = async (credentials) => {
+  console.log('Attempting login with credentials:', credentials);
+  // Simple JWT default endpoint is /api/token/ (BASE_URL already includes /api/)
+  const payload = {
+    username: credentials.username,
+    password: credentials.password,
+  };
   try {
-    console.log('Attempting login with data:', data);
-    const response = await API.post("token/", data);
+    const response = await API.post('token/', payload);
+    if (!response.data?.access) {
+      throw new Error('No access token received');
+    }
     console.log('Login successful, response:', response.data);
     return response;
-  } catch (error) {
-    console.error('Login error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
+  } catch (err) {
+    console.error('Login error (token/):', {
+      status: err.response?.status,
+      data: err.response?.data,
     });
-    throw error;
+    throw err;
   }
 };
 

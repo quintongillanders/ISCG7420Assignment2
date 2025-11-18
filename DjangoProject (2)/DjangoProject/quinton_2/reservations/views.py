@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -32,12 +32,23 @@ class ReservationViewSet(viewsets.ModelViewSet):
         return Reservation.objects.filter(user=user)
 
     def perform_create(self, serializer):
+        # Determine which user the reservation is for
+        target_user = self.request.user
+        if self.request.user.is_staff:
+            # Admins can create on behalf of other users via user_id
+            user_id = self.request.data.get('user_id')
+            if user_id:
+                try:
+                    target_user = User.objects.get(pk=user_id)
+                except User.DoesNotExist:
+                    raise serializers.ValidationError({'user_id': 'User not found'})
+
         # Save the booking first
-        booking = serializer.save(user=self.request.user)
+        booking = serializer.save(user=target_user)
         
         try:
             # Send confirmation email to the user
-            send_booking_confirmation(booking, self.request.user.email)
+            send_booking_confirmation(booking, target_user.email)
             
             # Send notification to admin (using the admin email from settings)
             admin_emails = [settings.EMAIL_HOST_USER]  # Or define a list of admin emails

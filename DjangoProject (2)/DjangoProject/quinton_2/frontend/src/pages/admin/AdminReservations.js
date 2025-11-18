@@ -11,6 +11,7 @@ export default function AdminReservations() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [newReservation, setNewReservation] = useState({
     user: "",
     room: "",
@@ -46,12 +47,10 @@ export default function AdminReservations() {
       setIsLoading(false);
     }
   };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewReservation(prev => ({ ...prev, [name]: value }));
   };
-
   const createReservation = async (e) => {
     e.preventDefault();
     try {
@@ -59,24 +58,24 @@ export default function AdminReservations() {
         `${BASE_URL}reservations/`,
         {
           user_id: newReservation.user,
-          room_id: newReservation.room,
+          room: newReservation.room,
           start_time: newReservation.start_time,
           end_time: newReservation.end_time,
-          special_requests: newReservation.special_requests,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("Reservation created successfully!");
       setShowAddForm(false);
       setNewReservation({
         user: "",
         room: "",
         start_time: "",
         end_time: "",
-        special_requests: ""
+        special_requests: "",
       });
+      setSuccessMessage("Reservation created successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
       fetchData();
     } catch (err) {
       console.error("Error creating reservation:", err);
@@ -88,9 +87,10 @@ export default function AdminReservations() {
     if (!window.confirm("Are you sure you want to cancel this reservation?")) return;
     try {
       await axios.delete(`${BASE_URL}reservations/${id}/`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Reservation cancelled successfully!");
+      setSuccessMessage("Reservation cancelled successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
       fetchData();
     } catch (err) {
       console.error("Error deleting reservation:", err);
@@ -116,6 +116,19 @@ export default function AdminReservations() {
 
         <h2>Manage Reservations</h2>
       </div>
+
+      {successMessage && (
+        <div className="success-message" style={{
+          margin: '12px 0',
+          padding: '10px 12px',
+          background: '#e6ffed',
+          color: '#046c4e',
+          border: '1px solid #b7f5c8',
+          borderRadius: '6px'
+        }}>
+          {successMessage}
+        </div>
+      )}
 
       <div className="reservations-controls">
         <button
