@@ -11,7 +11,7 @@ export default function Register() {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -20,20 +20,51 @@ export default function Register() {
     e.preventDefault();
     setError("");
     try {
-      await registerUser(formData);
-      alert("Registration successful! You can now log in.");
-      navigate("/");
+      const response = await registerUser(formData);
+      console.log('Registration response:', response);
+      if (response && response.data) {
+        alert("Registration successful! You can now log in.");
+        navigate("/");
+      } else {
+        throw new Error('No response data received from server');
+      }
     } catch (err) {
-      setError("Error registering. Please try again.");
-      console.error("Registration error:", err.response?.data || err.message);
+      const errorData = err.response?.data || {};
+      setError(errorData.error || errorData);
+      console.error("Registration error:", {
+        error: err,
+        response: errorData,
+        status: err.response?.status
+      });
     }
+  };
+
+  // Format backend validation errors for display
+  const formatValidationErrors = (errors) => {
+    if (!errors) return 'Registration failed. Please check your input.';
+    
+    if (Array.isArray(errors)) {
+      return errors.join(' ');
+    }
+    
+    if (typeof errors === 'object') {
+      return Object.entries(errors)
+        .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(' ') : messages}`)
+        .join('\n');
+    }
+    
+    return String(errors);
   };
 
   return (
     <div className="register-container">
       <h2>Create Account</h2>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message">
+          {typeof error === 'object' ? formatValidationErrors(error) : error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="register-form">
         <div className="form-group">
