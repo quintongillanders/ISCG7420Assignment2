@@ -1,7 +1,12 @@
 import axios from "axios";
 
 // Base URL for your Django backend
-export const BASE_URL = "http://127.0.0.1:8000/api/";
+// In production (Vercel), set REACT_APP_API_BASE_URL to your backend URL, e.g.
+// https://your-backend.example.com/api/
+export const BASE_URL =
+  (process.env.REACT_APP_API_BASE_URL && process.env.REACT_APP_API_BASE_URL.endsWith("/"))
+    ? process.env.REACT_APP_API_BASE_URL
+    : (process.env.REACT_APP_API_BASE_URL ? `${process.env.REACT_APP_API_BASE_URL}/` : "http://127.0.0.1:8000/api/");
 
 // Create a reusable Axios instance
 const API = axios.create({
