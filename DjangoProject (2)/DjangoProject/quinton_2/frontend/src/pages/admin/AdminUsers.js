@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
+import Banner from "../../components/Banner";
 import "./AdminUsers.css";
 
 export default function AdminUsers() {
@@ -10,6 +11,9 @@ export default function AdminUsers() {
   const [editingId, setEditingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -27,7 +31,7 @@ export default function AdminUsers() {
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
-      alert("Failed to load users. Please try again.");
+      setErrorMessage("Failed to load users. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -52,12 +56,12 @@ export default function AdminUsers() {
         await axios.put(`${BASE_URL}users/${editingId}/`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert("User updated successfully!");
+        setSuccessMessage("User updated successfully.");
       } else {
         await axios.post(`${BASE_URL}users/`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert("User created successfully!");
+        setSuccessMessage("User created successfully.");
       }
       setShowForm(false);
       setEditingId(null);
@@ -67,10 +71,12 @@ export default function AdminUsers() {
         password: "",
         is_staff: false
       });
+      setTimeout(() => setSuccessMessage(""), 3000);
       fetchUsers();
     } catch (error) {
       console.error("Error saving user:", error);
-      alert("Failed to save user. Please try again.");
+      setErrorMessage("Failed to save user. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -92,11 +98,13 @@ export default function AdminUsers() {
         await axios.delete(`${BASE_URL}users/${id}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert("User deleted successfully!");
+        setSuccessMessage("User deleted successfully.");
+        setTimeout(() => setSuccessMessage(""), 3000);
         fetchUsers();
       } catch (error) {
         console.error("Error deleting user:", error);
-        alert("Failed to delete user. Please try again.");
+        setErrorMessage("Failed to delete user. Please try again.");
+        setTimeout(() => setErrorMessage(""), 3000);
       }
     }
   };
@@ -127,6 +135,9 @@ export default function AdminUsers() {
         </button>
         <h2>Manage Users</h2>
       </div>
+
+      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={3000} />
+      <Banner type="error" message={errorMessage} onClose={() => setErrorMessage("")} autoHideMs={3000} />
 
       <div className="users-controls">
         <button

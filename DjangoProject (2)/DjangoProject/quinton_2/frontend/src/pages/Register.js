@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { registerUser } from "../api";
 import { useNavigate, Link } from "react-router-dom";
+import Banner from "../components/Banner";
 import "./Register.css";
 
 export default function Register() {
@@ -10,6 +11,7 @@ export default function Register() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
   
   const handleChange = (e) => {
@@ -23,8 +25,11 @@ export default function Register() {
       const response = await registerUser(formData);
       console.log('Registration response:', response);
       if (response && response.data) {
-        alert("Registration successful! You can now log in.");
-        navigate("/");
+        setSuccessMessage("Registration successful! You can now log in.");
+        setTimeout(() => {
+          setSuccessMessage("");
+          navigate("/");
+        }, 2000);
       } else {
         throw new Error('No response data received from server');
       }
@@ -60,11 +65,8 @@ export default function Register() {
     <div className="register-container">
       <h2>Create Account</h2>
 
-      {error && (
-        <div className="error-message">
-          {typeof error === 'object' ? formatValidationErrors(error) : error}
-        </div>
-      )}
+      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={2000} />
+      <Banner type="error" message={error ? (typeof error === 'object' ? formatValidationErrors(error) : String(error)) : ""} onClose={() => setError("")} autoHideMs={3000} />
 
       <form onSubmit={handleSubmit} className="register-form">
         <div className="form-group">

@@ -4,6 +4,7 @@ import {
   deleteReservation,
   updateReservation,
 } from "../api";
+import Banner from "../components/Banner";
 import "./MyReservations.css";
 
 function MyReservations() {
@@ -13,6 +14,8 @@ function MyReservations() {
     start_time: "",
     end_time: "",
   });
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -23,7 +26,8 @@ function MyReservations() {
     } catch (error) {
       console.error("Error fetching reservations:", error);
       if (error.response?.status === 401) {
-        alert("Session expired. Please log in again.");
+        setErrorMessage("Session expired. Please log in again.");
+        setTimeout(() => setErrorMessage(""), 3000);
         localStorage.removeItem("token");
         window.location.href = "/";
       }
@@ -34,22 +38,6 @@ function MyReservations() {
     fetchReservations();
   }, []);
 
-  const formatForInput = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const offset = date.getTimezoneOffset();
-    const localDate = new Date(date.getTime() - offset * 60 * 1000);
-    return localDate.toISOString().slice(0, 16);
-  };
-
-  const startEditing = (reservation) => {
-    setEditingId(reservation.id);
-    setEditedData({
-      start_time: formatForInput(reservation.start_time),
-      end_time: formatForInput(reservation.end_time),
-    });
-  };
-
   const cancelEdit = () => {
     setEditingId(null);
     setEditedData({ start_time: "", end_time: "" });
@@ -57,7 +45,8 @@ function MyReservations() {
 
   const saveEdit = async (id) => {
     if (!editedData.start_time || !editedData.end_time) {
-      alert("Please select both start and end times.");
+      setErrorMessage("Please select both start and end times.");
+      setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
 
@@ -65,7 +54,8 @@ function MyReservations() {
     const end = new Date(editedData.end_time);
 
     if (end <= start) {
-      alert("End time must be after start time!");
+      setErrorMessage("End time must be after start time!");
+      setTimeout(() => setErrorMessage(""), 3000);
       return;
     }
 
@@ -76,12 +66,14 @@ function MyReservations() {
       };
 
       await updateReservation(id, formattedData, token);
-      alert("Reservation updated successfully!");
+      setSuccessMessage("Reservation updated successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
       setEditingId(null);
       fetchReservations();
     } catch (error) {
       console.error("Error updating reservation:", error.response?.data || error);
-      alert("Failed to update reservation.");
+      setErrorMessage("Failed to update reservation.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -89,17 +81,22 @@ function MyReservations() {
     if (!window.confirm("Are you sure you want to delete this reservation?")) return;
     try {
       await deleteReservation(id, token);
-      alert("Reservation deleted successfully!");
+      setSuccessMessage("Reservation deleted successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
       fetchReservations();
     } catch (error) {
       console.error("Error deleting reservation:", error.response?.data || error);
-      alert("Failed to delete reservation.");
+      setErrorMessage("Failed to delete reservation.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
   return (
     <div className="reservations-container">
       <h2 className="reservations-header">My Reservations</h2>
+
+      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={3000} />
+      <Banner type="error" message={errorMessage} onClose={() => setErrorMessage("")} autoHideMs={3000} />
 
       {reservations.length === 0 ? (
         <div className="no-reservations">No reservations found.</div>

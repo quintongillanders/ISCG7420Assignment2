@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
+import Banner from "../../components/Banner";
 import "./AdminReservations.css";
 
 export default function AdminReservations() {
@@ -12,6 +13,7 @@ export default function AdminReservations() {
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [newReservation, setNewReservation] = useState({
     user: "",
     room: "",
@@ -42,7 +44,8 @@ export default function AdminReservations() {
       setUsers(resUsers.data);
     } catch (err) {
       console.error("Error fetching data:", err);
-      alert("Failed to load data. Please try again.");
+      setErrorMessage("Failed to load data. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +82,8 @@ export default function AdminReservations() {
       fetchData();
     } catch (err) {
       console.error("Error creating reservation:", err);
-      alert("Failed to create reservation. Please try again.");
+      setErrorMessage("Failed to create reservation. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -117,18 +121,18 @@ export default function AdminReservations() {
         <h2>Manage Reservations</h2>
       </div>
 
-      {successMessage && (
-        <div className="success-message" style={{
-          margin: '12px 0',
-          padding: '10px 12px',
-          background: '#e6ffed',
-          color: '#046c4e',
-          border: '1px solid #b7f5c8',
-          borderRadius: '6px'
-        }}>
-          {successMessage}
-        </div>
-      )}
+      <Banner
+        type="success"
+        message={successMessage}
+        onClose={() => setSuccessMessage("")}
+        autoHideMs={3000}
+      />
+      <Banner
+        type="error"
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+        autoHideMs={3000}
+      />
 
       <div className="reservations-controls">
         <button

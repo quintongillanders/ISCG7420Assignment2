@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getRooms } from "../api";
 import { useNavigate } from "react-router-dom";
+import Banner from "../components/Banner";
 import "./AllRooms.css";
 
 export default function AllRooms() {
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -18,11 +20,13 @@ export default function AllRooms() {
       } catch (error) {
         console.error("Error fetching rooms:", error);
         if (error.response?.status === 401) {
-          alert("Session expired. Please log in again.");
+          setErrorMessage("Session expired. Please log in again.");
+          setTimeout(() => setErrorMessage(""), 3000);
           localStorage.removeItem("token");
           window.location.href = "/";
         } else {
-          alert("Failed to load rooms.");
+          setErrorMessage("Failed to load rooms.");
+          setTimeout(() => setErrorMessage(""), 3000);
         }
       } finally {
         setIsLoading(false);
@@ -49,6 +53,8 @@ export default function AllRooms() {
         <h2>Our Conference Rooms</h2>
         <p>Find the perfect space for your next meeting or event</p>
       </div>
+
+      <Banner type="error" message={errorMessage} onClose={() => setErrorMessage("")} autoHideMs={3000} />
 
       {rooms.length === 0 ? (
         <div className="no-rooms">

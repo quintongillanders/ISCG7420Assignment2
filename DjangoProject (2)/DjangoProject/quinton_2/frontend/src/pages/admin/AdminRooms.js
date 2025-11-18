@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
+import Banner from "../../components/Banner";
 import "./AdminRooms.css";
 
 export default function AdminRooms() {
@@ -10,11 +11,13 @@ export default function AdminRooms() {
   const [editingId, setEditingId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [newRoom, setNewRoom] = useState({
     name: "",
     capacity: "",
     description: "",
-    location: ""  
+    location: ""
   });
 
   const token = localStorage.getItem("token");
@@ -27,7 +30,8 @@ export default function AdminRooms() {
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
-      alert("Failed to load rooms. Please try again.");
+      setErrorMessage("Failed to load rooms. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setIsLoading(false);
     }
@@ -41,11 +45,6 @@ export default function AdminRooms() {
     fetchRooms();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewRoom({ ...newRoom, [name]: value });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,14 +55,14 @@ export default function AdminRooms() {
           newRoom,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        alert("Room updated successfully!");
+        setSuccessMessage("Room updated successfully.");
       } else {
         await axios.post(
           `${BASE_URL}rooms/`,
           newRoom,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        alert("Room added successfully!");
+        setSuccessMessage("Room added successfully.");
       }
       setShowForm(false);
       setEditingId(null);
@@ -73,10 +72,12 @@ export default function AdminRooms() {
         description: "",
         location: ""
       });
+      setTimeout(() => setSuccessMessage(""), 3000);
       fetchRooms();
     } catch (error) {
       console.error("Error saving room:", error);
-      alert("Failed to save room. Please try again.");
+      setErrorMessage("Failed to save room. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -98,11 +99,13 @@ export default function AdminRooms() {
         await axios.delete(`${BASE_URL}rooms/${id}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        alert("Room deleted successfully!");
+        setSuccessMessage("Room deleted successfully.");
+        setTimeout(() => setSuccessMessage(""), 3000);
         fetchRooms();
       } catch (error) {
         console.error("Error deleting room:", error);
-        alert("Failed to delete room. Please try again.");
+        setErrorMessage("Failed to delete room. Please try again.");
+        setTimeout(() => setErrorMessage(""), 3000);
       }
     }
   };
@@ -133,6 +136,9 @@ export default function AdminRooms() {
         </button>
         <h2>Manage Conference Rooms</h2>
       </div>
+
+      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={3000} />
+      <Banner type="error" message={errorMessage} onClose={() => setErrorMessage("")} autoHideMs={3000} />
 
       <div className="rooms-controls">
         <button

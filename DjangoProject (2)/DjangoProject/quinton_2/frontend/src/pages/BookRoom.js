@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getRooms, createReservation } from "../api";
+import Banner from "../components/Banner";
 import "./BookRoom.css"; // You might need to create this file
 
 export default function BookRoom() {
@@ -13,7 +14,10 @@ export default function BookRoom() {
     end_time: "",
   });
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -53,6 +57,7 @@ export default function BookRoom() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setErrorMessage("");
 
     if (!formData.room) {
       setError("Please select a room");
@@ -87,11 +92,15 @@ export default function BookRoom() {
       };
 
       await createReservation(reservationData, token);
-      alert("Room booked successfully!");
+      setSuccessMessage("Room booked successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
       navigate("/my-reservations");
     } catch (error) {
       console.error("Booking error:", error);
-      setError(error.response?.data?.message || "Failed to book room. Please try again.");
+      const msg = error.response?.data?.message || "Failed to book room. Please try again.";
+      setError(msg);
+      setErrorMessage(msg);
+      setTimeout(() => setErrorMessage(""), 3000);
     } finally {
       setIsSubmitting(false);
     }
@@ -101,7 +110,8 @@ export default function BookRoom() {
     <div className="book-room-container">
       <h2>Book a Conference Room</h2>
 
-      {error && <div className="error-message">{error}</div>}
+      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={3000} />
+      <Banner type="error" message={errorMessage || error} onClose={() => { setErrorMessage(""); setError(""); }} autoHideMs={3000} />
 
       <form onSubmit={handleSubmit} className="booking-form">
         <div className="form-group">
