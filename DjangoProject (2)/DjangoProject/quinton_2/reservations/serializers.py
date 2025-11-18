@@ -16,6 +16,38 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'is_staff']
 
 
+class UserAdminSerializer(serializers.ModelSerializer):
+    """
+    Serializer for admin CRUD on users. Accepts a write-only password and
+    hashes it via set_password() on create/update. On update, if password is
+    omitted, the existing password is kept.
+    """
+    password = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'is_staff', 'password']
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        user = User(**validated_data)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
+
 # -----------------------------
 # ROOM SERIALIZER
 # -----------------------------

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.conf import settings
 from .models import Room, Reservation
-from .serializers import RoomSerializer, ReservationSerializer, UserSerializer
+from .serializers import RoomSerializer, ReservationSerializer, UserSerializer, UserAdminSerializer
 from .emails import send_booking_confirmation, send_booking_notification
 
 
@@ -75,6 +75,12 @@ class UserViewSet(viewsets.ModelViewSet):
         """Return the current logged-in user's info"""
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+    def get_serializer_class(self):
+        # Use admin serializer for write operations to handle password hashing
+        if self.action in ["create", "update", "partial_update"]:
+            return UserAdminSerializer
+        return UserSerializer
 
 
 # =======================
