@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
@@ -19,14 +19,16 @@ export default function AdminReservations() {
     room: "",
     start_time: "",
     end_time: "",
-    special_requests: ""
+    special_requests: "",
   });
 
   const token = localStorage.getItem("token");
 
-  const fetchData = async () => {
+  // ✅ FIX: Wrap fetchData in useCallback so React doesn't complain
+  const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
+
       const [resReservations, resRooms, resUsers] = await Promise.all([
         axios.get(`${BASE_URL}reservations/`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -49,11 +51,13 @@ export default function AdminReservations() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token]); // dependency is token only
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewReservation(prev => ({ ...prev, [name]: value }));
+    setNewReservation((prev) => ({ ...prev, [name]: value }));
   };
+
   const createReservation = async (e) => {
     e.preventDefault();
     try {
@@ -69,6 +73,7 @@ export default function AdminReservations() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       setShowAddForm(false);
       setNewReservation({
         user: "",
@@ -77,8 +82,10 @@ export default function AdminReservations() {
         end_time: "",
         special_requests: "",
       });
+
       setSuccessMessage("Reservation created successfully.");
       setTimeout(() => setSuccessMessage(""), 3000);
+
       fetchData();
     } catch (err) {
       console.error("Error creating reservation:", err);
@@ -88,13 +95,17 @@ export default function AdminReservations() {
   };
 
   const deleteReservation = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this reservation?")) return;
+    if (!window.confirm("Are you sure you want to cancel this reservation?"))
+      return;
+
     try {
       await axios.delete(`${BASE_URL}reservations/${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       setSuccessMessage("Reservation cancelled successfully.");
       setTimeout(() => setSuccessMessage(""), 3000);
+
       fetchData();
     } catch (err) {
       console.error("Error deleting reservation:", err);
@@ -102,9 +113,10 @@ export default function AdminReservations() {
     }
   };
 
+  // ✅ FIX: add fetchData to the dependency array
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   if (isLoading) return <div className="loading">Loading...</div>;
 
@@ -113,7 +125,7 @@ export default function AdminReservations() {
       <div className="admin-header">
         <button
           className="btn btn-back"
-          onClick={() => navigate('/admin-dashboard')}
+          onClick={() => navigate("/admin-dashboard")}
         >
           &larr; Back to Dashboard
         </button>
@@ -136,10 +148,10 @@ export default function AdminReservations() {
 
       <div className="reservations-controls">
         <button
-          className={`btn ${showAddForm ? 'btn-secondary' : 'btn-add'}`}
+          className={`btn ${showAddForm ? "btn-secondary" : "btn-add"}`}
           onClick={() => setShowAddForm(!showAddForm)}
         >
-          {showAddForm ? 'Cancel' : '+ Add New Reservation'}
+          {showAddForm ? "Cancel" : "+ Add New Reservation"}
         </button>
       </div>
 
@@ -161,19 +173,21 @@ export default function AdminReservations() {
               reservations.map((reservation) => (
                 <tr key={reservation.id}>
                   <td>{reservation.id}</td>
-                  <td>{reservation.user_name || 'N/A'}</td>
-                  <td>{reservation.room_name || 'N/A'}</td>
+                  <td>{reservation.user_name || "N/A"}</td>
+                  <td>{reservation.room_name || "N/A"}</td>
                   <td>{new Date(reservation.start_time).toLocaleString()}</td>
                   <td>{new Date(reservation.end_time).toLocaleString()}</td>
                   <td>
-                    <span className={`status-badge ${
-                      new Date(reservation.end_time) < new Date() 
-                        ? 'status-completed' 
-                        : 'status-active'
-                    }`}>
+                    <span
+                      className={`status-badge ${
+                        new Date(reservation.end_time) < new Date()
+                          ? "status-completed"
+                          : "status-active"
+                      }`}
+                    >
                       {new Date(reservation.end_time) < new Date()
-                        ? 'Completed'
-                        : 'Active'}
+                        ? "Completed"
+                        : "Active"}
                     </span>
                   </td>
                   <td>
@@ -188,7 +202,9 @@ export default function AdminReservations() {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="no-reservations">No reservations found.</td>
+                <td colSpan="7" className="no-reservations">
+                  No reservations found.
+                </td>
               </tr>
             )}
           </tbody>

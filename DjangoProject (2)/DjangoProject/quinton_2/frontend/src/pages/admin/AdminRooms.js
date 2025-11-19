@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
@@ -22,7 +22,8 @@ export default function AdminRooms() {
 
   const token = localStorage.getItem("token");
 
-  const fetchRooms = async () => {
+  // ⭐ FIX: wrap fetchRooms in useCallback
+  const fetchRooms = useCallback(async () => {
     try {
       const response = await axios.get(`${BASE_URL}rooms/`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -35,15 +36,24 @@ export default function AdminRooms() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token]);
 
+  // ⭐ FIX: add fetchRooms, navigate, token to dependency list
   useEffect(() => {
     if (!token) {
       navigate("/login");
       return;
     }
     fetchRooms();
-  }, []);
+  }, [fetchRooms, navigate, token]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewRoom((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +74,7 @@ export default function AdminRooms() {
         );
         setSuccessMessage("Room added successfully.");
       }
+
       setShowForm(false);
       setEditingId(null);
       setNewRoom({
@@ -72,8 +83,10 @@ export default function AdminRooms() {
         description: "",
         location: ""
       });
+
       setTimeout(() => setSuccessMessage(""), 3000);
       fetchRooms();
+
     } catch (error) {
       console.error("Error saving room:", error);
       setErrorMessage("Failed to save room. Please try again.");
@@ -89,24 +102,27 @@ export default function AdminRooms() {
       description: room.description,
       location: room.location || ""
     });
+
     setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this room?")) {
-      try {
-        await axios.delete(`${BASE_URL}rooms/${id}/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setSuccessMessage("Room deleted successfully.");
-        setTimeout(() => setSuccessMessage(""), 3000);
-        fetchRooms();
-      } catch (error) {
-        console.error("Error deleting room:", error);
-        setErrorMessage("Failed to delete room. Please try again.");
-        setTimeout(() => setErrorMessage(""), 3000);
-      }
+    if (!window.confirm("Are you sure you want to delete this room?")) return;
+
+    try {
+      await axios.delete(`${BASE_URL}rooms/${id}/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setSuccessMessage("Room deleted successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
+
+      fetchRooms();
+    } catch (error) {
+      console.error("Error deleting room:", error);
+      setErrorMessage("Failed to delete room. Please try again.");
+      setTimeout(() => setErrorMessage(""), 3000);
     }
   };
 
@@ -132,7 +148,7 @@ export default function AdminRooms() {
           className="btn btn-back"
           onClick={() => navigate("/admin-dashboard")}
         >
-          &larr; Back to Dashboard
+          ← Back to Dashboard
         </button>
         <h2>Manage Conference Rooms</h2>
       </div>
@@ -142,16 +158,17 @@ export default function AdminRooms() {
 
       <div className="rooms-controls">
         <button
-          className={`btn ${showForm ? 'btn-secondary' : 'btn-add'}`}
+          className={`btn ${showForm ? "btn-secondary" : "btn-add"}`}
           onClick={() => setShowForm(!showForm)}
         >
-          {showForm ? 'Cancel' : '+ Add New Room'}
+          {showForm ? "Cancel" : "+ Add New Room"}
         </button>
       </div>
 
       {showForm && (
         <form onSubmit={handleSubmit} className="room-form">
-          <h3>{editingId ? 'Edit Room' : 'Add New Room'}</h3>
+          <h3>{editingId ? "Edit Room" : "Add New Room"}</h3>
+
           <div className="form-row">
             <div className="form-group">
               <label>Room Name</label>
@@ -160,10 +177,10 @@ export default function AdminRooms() {
                 name="name"
                 value={newRoom.name}
                 onChange={handleInputChange}
-                placeholder="e.g., Conference Room A"
                 required
               />
             </div>
+
             <div className="form-group">
               <label>Capacity</label>
               <input
@@ -172,7 +189,6 @@ export default function AdminRooms() {
                 min="1"
                 value={newRoom.capacity}
                 onChange={handleInputChange}
-                placeholder="e.g., 10"
                 required
               />
             </div>
@@ -185,7 +201,6 @@ export default function AdminRooms() {
               name="location"
               value={newRoom.location}
               onChange={handleInputChange}
-              placeholder="e.g., First Floor, Building A"
               required
             />
           </div>
@@ -196,21 +211,16 @@ export default function AdminRooms() {
               name="description"
               value={newRoom.description}
               onChange={handleInputChange}
-              placeholder="Brief description of the room"
               rows="3"
             />
           </div>
 
           <div className="form-actions">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleCancel}
-            >
+            <button type="button" className="btn btn-secondary" onClick={handleCancel}>
               Cancel
             </button>
             <button type="submit" className="btn btn-primary">
-              {editingId ? 'Update Room' : 'Add Room'}
+              {editingId ? "Update Room" : "Add Room"}
             </button>
           </div>
         </form>
@@ -227,25 +237,20 @@ export default function AdminRooms() {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {rooms.length > 0 ? (
               rooms.map((room) => (
                 <tr key={room.id}>
                   <td>{room.name}</td>
                   <td>{room.capacity}</td>
-                  <td>{room.location || '-'}</td>
-                  <td>{room.description || '-'}</td>
+                  <td>{room.location || "-"}</td>
+                  <td>{room.description || "-"}</td>
                   <td className="actions">
-                    <button
-                      className="btn btn-edit"
-                      onClick={() => handleEdit(room)}
-                    >
+                    <button className="btn btn-edit" onClick={() => handleEdit(room)}>
                       Edit
                     </button>
-                    <button
-                      className="btn btn-delete"
-                      onClick={() => handleDelete(room.id)}
-                    >
+                    <button className="btn btn-delete" onClick={() => handleDelete(room.id)}>
                       Delete
                     </button>
                   </td>

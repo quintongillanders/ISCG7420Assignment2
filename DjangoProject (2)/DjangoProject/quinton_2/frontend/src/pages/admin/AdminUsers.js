@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../../api";
@@ -23,7 +23,8 @@ export default function AdminUsers() {
 
   const token = localStorage.getItem("token");
 
-  const fetchUsers = async () => {
+  // ✅ FIX: useCallback to prevent React hook warning
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await axios.get(`${BASE_URL}users/`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -35,17 +36,18 @@ export default function AdminUsers() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token]);
 
+  // ✅ FIX: add fetchUsers to dependency list
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
@@ -63,6 +65,7 @@ export default function AdminUsers() {
         });
         setSuccessMessage("User created successfully.");
       }
+
       setShowForm(false);
       setEditingId(null);
       setFormData({
@@ -71,6 +74,7 @@ export default function AdminUsers() {
         password: "",
         is_staff: false
       });
+
       setTimeout(() => setSuccessMessage(""), 3000);
       fetchUsers();
     } catch (error) {
@@ -89,7 +93,7 @@ export default function AdminUsers() {
       is_staff: user.is_staff
     });
     setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id) => {
@@ -98,8 +102,10 @@ export default function AdminUsers() {
         await axios.delete(`${BASE_URL}users/${id}/`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+
         setSuccessMessage("User deleted successfully.");
         setTimeout(() => setSuccessMessage(""), 3000);
+
         fetchUsers();
       } catch (error) {
         console.error("Error deleting user:", error);
@@ -129,28 +135,40 @@ export default function AdminUsers() {
       <div className="admin-header">
         <button
           className="btn btn-back"
-          onClick={() => navigate('/admin-dashboard')}
+          onClick={() => navigate("/admin-dashboard")}
         >
           &larr; Back to Dashboard
         </button>
         <h2>Manage Users</h2>
       </div>
 
-      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={3000} />
-      <Banner type="error" message={errorMessage} onClose={() => setErrorMessage("")} autoHideMs={3000} />
+      <Banner
+        type="success"
+        message={successMessage}
+        onClose={() => setSuccessMessage("")}
+        autoHideMs={3000}
+      />
+
+      <Banner
+        type="error"
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+        autoHideMs={3000}
+      />
 
       <div className="users-controls">
         <button
-          className={`btn ${showForm ? 'btn-secondary' : 'btn-add'}`}
+          className={`btn ${showForm ? "btn-secondary" : "btn-add"}`}
           onClick={() => setShowForm(!showForm)}
         >
-          {showForm ? 'Cancel' : '+ Add New User'}
+          {showForm ? "Cancel" : "+ Add New User"}
         </button>
       </div>
 
       {showForm && (
         <form onSubmit={handleSubmit} className="user-form">
-          <h3>{editingId ? 'Edit User' : 'Add New User'}</h3>
+          <h3>{editingId ? "Edit User" : "Add New User"}</h3>
+
           <div className="form-group">
             <label>Username</label>
             <input
@@ -161,6 +179,7 @@ export default function AdminUsers() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Email</label>
             <input
@@ -171,6 +190,7 @@ export default function AdminUsers() {
               required
             />
           </div>
+
           <div className="form-group">
             <label>Password</label>
             <input
@@ -179,9 +199,12 @@ export default function AdminUsers() {
               value={formData.password}
               onChange={handleInputChange}
               required={!editingId}
-              placeholder={editingId ? "Leave blank to keep current password" : ""}
+              placeholder={
+                editingId ? "Leave blank to keep current password" : ""
+              }
             />
           </div>
+
           <div className="form-group checkbox-group">
             <label>
               <input
@@ -193,6 +216,7 @@ export default function AdminUsers() {
               Admin User
             </label>
           </div>
+
           <div className="form-actions">
             <button
               type="button"
@@ -201,8 +225,9 @@ export default function AdminUsers() {
             >
               Cancel
             </button>
+
             <button type="submit" className="btn btn-primary">
-              {editingId ? 'Update User' : 'Add User'}
+              {editingId ? "Update User" : "Add User"}
             </button>
           </div>
         </form>
@@ -219,6 +244,7 @@ export default function AdminUsers() {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
@@ -226,7 +252,7 @@ export default function AdminUsers() {
                   <td>{user.id}</td>
                   <td>{user.username}</td>
                   <td>{user.email}</td>
-                  <td>{user.is_staff ? 'Admin' : 'User'}</td>
+                  <td>{user.is_staff ? "Admin" : "User"}</td>
                   <td className="actions">
                     <button
                       className="btn btn-edit"
@@ -245,7 +271,9 @@ export default function AdminUsers() {
               ))
             ) : (
               <tr>
-                <td colSpan="5" className="no-users">No users found.</td>
+                <td colSpan="5" className="no-users">
+                  No users found.
+                </td>
               </tr>
             )}
           </tbody>

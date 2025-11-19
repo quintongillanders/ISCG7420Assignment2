@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   getReservations,
   deleteReservation,
@@ -19,7 +19,8 @@ function MyReservations() {
 
   const token = localStorage.getItem("token");
 
-  const fetchReservations = async () => {
+  // ⭐ REQUIRED FIX: useCallback to avoid dependency error
+  const fetchReservations = useCallback(async () => {
     try {
       const res = await getReservations(token);
       setReservations(res.data);
@@ -32,11 +33,20 @@ function MyReservations() {
         window.location.href = "/";
       }
     }
-  };
+  }, [token]);
 
+  // ⭐ REQUIRED FIX: Add fetchReservations to dependency array
   useEffect(() => {
     fetchReservations();
-  }, []);
+  }, [fetchReservations]);
+
+  const startEditing = (res) => {
+    setEditingId(res.id);
+    setEditedData({
+      start_time: res.start_time ? res.start_time.substring(0, 16) : "",
+      end_time: res.end_time ? res.end_time.substring(0, 16) : "",
+    });
+  };
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -68,10 +78,11 @@ function MyReservations() {
       await updateReservation(id, formattedData, token);
       setSuccessMessage("Reservation updated successfully.");
       setTimeout(() => setSuccessMessage(""), 3000);
+
       setEditingId(null);
       fetchReservations();
     } catch (error) {
-      console.error("Error updating reservation:", error.response?.data || error);
+      console.error("Error updating reservation:", error);
       setErrorMessage("Failed to update reservation.");
       setTimeout(() => setErrorMessage(""), 3000);
     }
@@ -79,13 +90,15 @@ function MyReservations() {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this reservation?")) return;
+
     try {
       await deleteReservation(id, token);
       setSuccessMessage("Reservation deleted successfully.");
       setTimeout(() => setSuccessMessage(""), 3000);
+
       fetchReservations();
     } catch (error) {
-      console.error("Error deleting reservation:", error.response?.data || error);
+      console.error("Error deleting reservation:", error);
       setErrorMessage("Failed to delete reservation.");
       setTimeout(() => setErrorMessage(""), 3000);
     }
@@ -95,8 +108,18 @@ function MyReservations() {
     <div className="reservations-container">
       <h2 className="reservations-header">My Reservations</h2>
 
-      <Banner type="success" message={successMessage} onClose={() => setSuccessMessage("")} autoHideMs={3000} />
-      <Banner type="error" message={errorMessage} onClose={() => setErrorMessage("")} autoHideMs={3000} />
+      <Banner
+        type="success"
+        message={successMessage}
+        onClose={() => setSuccessMessage("")}
+        autoHideMs={3000}
+      />
+      <Banner
+        type="error"
+        message={errorMessage}
+        onClose={() => setErrorMessage("")}
+        autoHideMs={3000}
+      />
 
       {reservations.length === 0 ? (
         <div className="no-reservations">No reservations found.</div>
@@ -110,6 +133,7 @@ function MyReservations() {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {reservations.map((res) => (
               <tr key={res.id}>
@@ -130,6 +154,7 @@ function MyReservations() {
                         }
                       />
                     </td>
+
                     <td>
                       <input
                         type="datetime-local"
@@ -143,18 +168,13 @@ function MyReservations() {
                         }
                       />
                     </td>
+
                     <td>
                       <div className="action-buttons">
-                        <button
-                          className="btn btn-save"
-                          onClick={() => saveEdit(res.id)}
-                        >
+                        <button className="btn btn-save" onClick={() => saveEdit(res.id)}>
                           Save
                         </button>
-                        <button
-                          className="btn btn-cancel"
-                          onClick={cancelEdit}
-                        >
+                        <button className="btn btn-cancel" onClick={cancelEdit}>
                           Cancel
                         </button>
                       </div>
@@ -162,30 +182,15 @@ function MyReservations() {
                   </>
                 ) : (
                   <>
-                    <td>
-                      {new Date(res.start_time).toLocaleString([], {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
-                    </td>
-                    <td>
-                      {new Date(res.end_time).toLocaleString([], {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      })}
-                    </td>
+                    <td>{new Date(res.start_time).toLocaleString()}</td>
+                    <td>{new Date(res.end_time).toLocaleString()}</td>
                     <td>
                       <div className="action-buttons">
-                        <button
-                          className="btn btn-edit"
-                          onClick={() => startEditing(res)}
-                        >
+                        <button className="btn btn-edit" onClick={() => startEditing(res)}>
                           Edit
                         </button>
-                        <button
-                          className="btn btn-delete"
-                          onClick={() => handleDelete(res.id)}
-                        >
+
+                        <button className="btn btn-delete" onClick={() => handleDelete(res.id)}>
                           Delete
                         </button>
                       </div>
